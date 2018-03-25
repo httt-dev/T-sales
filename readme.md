@@ -9,4 +9,5 @@ https://github.com/toanph-github/T-sales/wiki
 
 [Link](http://t-sales.000webhostapp.com/login)
 
-Tài khoản đăng nhập: Liên hệ.
+Username: admin
+Password: 123456abc
