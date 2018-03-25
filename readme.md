@@ -10,4 +10,5 @@ https://github.com/toanph-github/T-sales/wiki
 [Link](http://t-sales.000webhostapp.com/login)
 
 Username: admin
+
 Password: 123456abc
