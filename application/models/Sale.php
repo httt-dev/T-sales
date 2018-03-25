@@ -314,8 +314,10 @@ class Sale extends CI_Model
 			'promotion' 	 => $data['get_stringpromotion'],
 			'customer_debt' => $data['customer_debt'],
 			'sanluong_tieude' => $thuong_san_luong['tieude'],
-			'sanluong_soluong' => $thuong_san_luong['soluong'],
-			'sanluong_dongia' => $thuong_san_luong['dongia'],
+			'sanluong_soluong_dd' => $thuong_san_luong['soluong_dd'],
+			'sanluong_dongia_dd' => $thuong_san_luong['dongia_dd'],
+			'sanluong_soluong_hh' => $thuong_san_luong['soluong_hh'],
+			'sanluong_dongia_hh' => $thuong_san_luong['dongia_hh'],
 			'type' => $type,
 			
 		);

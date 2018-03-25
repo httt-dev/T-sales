@@ -236,7 +236,7 @@ class Giftcard extends CI_Model
 		$arrReturn = array();
 		//echo "a"; exit;
 		$this->load->helper('promotion');
-		$this->db->select('sale_time,t_customers.code,t_people.full_name,sale_id,customer_id,order_money,pay_money,promotion,sanluong_soluong,sanluong_dongia,car_money');
+		$this->db->select('sale_time,t_customers.code,t_people.full_name,sale_id,customer_id,order_money,pay_money,promotion,sanluong_soluong_dd,sanluong_dongia_dd,sanluong_soluong_hh,sanluong_dongia_hh,car_money');
 		$this->db->from('sales');
 		$this->db->join('t_people', 't_people.person_id = sales.customer_id');
 		$this->db->join('t_customers', 't_customers.person_id = t_people.person_id');
@@ -260,8 +260,10 @@ class Giftcard extends CI_Model
 		$tong=0;
 		if(sizeof($results) > 0){
 			foreach($results as $result){
-				$tong_kgthuongsanluong = $tong_kgthuongsanluong + $result['sanluong_soluong'];
-				$tong_sotienthuongsanluong = $tong_sotienthuongsanluong + ($result['sanluong_soluong']*$result['sanluong_dongia']);
+				$tong_kgthuongsanluong = $tong_kgthuongsanluong + $result['sanluong_soluong_dd'] + $result['sanluong_soluong_hh'];
+				$tong_sotienthuongsanluong = $tong_sotienthuongsanluong + ($result['sanluong_soluong_dd']*$result['sanluong_dongia_dd'])
+				+ ($result['sanluong_soluong_hh']*$result['sanluong_dongia_hh'])
+				;
 			}
 		}
 		$arrReturn[0]['kg_thuong_san_luong'] = $tong_kgthuongsanluong;
@@ -333,7 +335,7 @@ class Giftcard extends CI_Model
 		$arrReturn = array();
 		//echo "a"; exit;
 		$this->load->helper('promotion');
-		$this->db->select('sale_time,t_customers.code,t_people.full_name,sale_id,t_people.person_id,order_money,pay_money,promotion,sanluong_dongia,sanluong_soluong,car_money');
+		$this->db->select('sale_time,t_customers.code,t_people.full_name,sale_id,t_people.person_id,order_money,pay_money,promotion,sanluong_dongia_dd,sanluong_soluong_dd,sanluong_dongia_hh,sanluong_soluong_hh,car_money');
 		$this->db->from('sales');
 		$this->db->join('t_people', 't_people.person_id = sales.customer_id');
 		$this->db->join('t_customers', 't_customers.person_id = t_people.person_id');
@@ -403,7 +405,16 @@ class Giftcard extends CI_Model
 				
 				$tienkhuyenmai = $tienkhuyenmai + $arrkhuyenmai['money'];
 			}
-			$tongsanluongtang = $result['sanluong_dongia'] * $result['sanluong_soluong'];
+			
+			$tongsanluongtang_dd = $result['sanluong_dongia_dd'] * $result['sanluong_soluong_dd'];
+			$tongsanluongtang_hh = $result['sanluong_dongia_hh'] * $result['sanluong_soluong_hh'];
+			if($category == 'thuc_an_dam_dac'){
+				$tongsanluongtang = $tongsanluongtang_dd;
+			}else if($category == 'thuc_an_hon_hop'){
+				$tongsanluongtang = $tongsanluongtang_hh;
+			}else{
+				$tongsanluongtang = $tongsanluongtang_dd + $tongsanluongtang_hh;
+			}
 			$tienvanchuyen = $result['car_money'] * $tongkgvanchuyen;
 			$laithucsu = ($tonggiaban + $tienvanchuyen ) - $tienkhuyenmai - $tongsanluongtang;
 			$arrReturn[$i]['tienvanchuyen'] = $tienvanchuyen;

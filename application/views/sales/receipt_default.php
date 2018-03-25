@@ -286,18 +286,24 @@
 			</tr>
 			<?php } ?>
 			<!-- ************************************* Thuong sang luong**********************************-->
-			<?php if($sale_info['sanluong_soluong'] <> 0 && $sale_info['sanluong_dongia'] <> 0){ 
-				$tongtiensanluong = $sale_info['sanluong_soluong']*$sale_info['sanluong_dongia'];
+			<?php if(($sale_info['sanluong_soluong_dd'] <> 0 && $sale_info['sanluong_dongia_dd'] <> 0)
+			|| ($sale_info['sanluong_soluong_hh'] <> 0 && $sale_info['sanluong_dongia_hh'] <> 0)
+			){
+				$sanluong_soluong = $sale_info['sanluong_soluong_dd'] + $sale_info['sanluong_soluong_hh'];
+				$sanluong_thanhtien_dd =  $sale_info['sanluong_soluong_dd']*$sale_info['sanluong_dongia_dd'];
+				$sanluong_thanhtien_hh =  $sale_info['sanluong_soluong_hh']*$sale_info['sanluong_dongia_hh'];
+				$tongtiensanluong = $sanluong_thanhtien_dd + $sanluong_thanhtien_hh;
+				$sanluong_dongia = $tongtiensanluong / $sanluong_soluong;
 				?>
 			<tr>
 				<td colspan="4" class="print_header_table">
 					<span><?php echo $sale_info['sanluong_tieude']; ?></span>
 				</td>
 				<td colspan="2" class="print_header_table">
-					<span><?php echo $sale_info['sanluong_soluong']; ?></span>
+					<span><?php echo $sanluong_soluong; ?></span>
 				</td>
 				<td class="print_header_table" style="text-align: right; padding: 4px;">
-					<span><?php echo to_currency_no_money($sale_info['sanluong_dongia']); ?></span>
+					<span><?php echo to_currency_no_money($sanluong_dongia); ?></span>
 				</td>
 				<td class="print_header_table" style="text-align: right; padding: 4px;">
 					<span><?php echo to_currency_no_money($tongtiensanluong); ?></span>

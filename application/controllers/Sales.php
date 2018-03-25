@@ -335,12 +335,17 @@ class Sales extends Secure_Controller
 		$this->_reload($data);
 	}
 	public function update_thuongsanluong(){
-		$sanluong_dongia = $this->input->post('sanluong_dongia');
+		$sanluong_dongia = $this->input->post('sanluong_dongia_dd');
 		$sanluong_dongia =  str_replace(".","",$sanluong_dongia);
 		$sanluong_dongia =  str_replace(",","",$sanluong_dongia);
+		$sanluong_dongia_hh = $this->input->post('sanluong_dongia_hh');
+		$sanluong_dongia_hh =  str_replace(".","",$sanluong_dongia_hh);
+		$sanluong_dongia_hh =  str_replace(",","",$sanluong_dongia_hh);
 		$arrSanluong['sanluong_tieude'] = $this->input->post('sanluong_tieude');
-		$arrSanluong['sanluong_soluong'] = $this->input->post('sanluong_soluong');
-		$arrSanluong['sanluong_dongia'] = $sanluong_dongia;
+		$arrSanluong['sanluong_soluong_dd'] = $this->input->post('sanluong_soluong_dd');
+		$arrSanluong['sanluong_dongia_dd'] = $sanluong_dongia;
+		$arrSanluong['sanluong_soluong_hh'] = $this->input->post('sanluong_soluong_hh');
+		$arrSanluong['sanluong_dongia_hh'] = $sanluong_dongia_hh;
 		$this->sale_lib->set_thuongsanluong($arrSanluong);
 		$this->_reload();
 
@@ -459,12 +464,16 @@ class Sales extends Secure_Controller
 				$arrThuongsanluong = $this->sale_lib->get_thuongsanluong();
 				if(isset($arrThuongsanluong)){
 					$data['thuong_san_luong']['tieude'] = $arrThuongsanluong['sanluong_tieude'];
-					$data['thuong_san_luong']['soluong'] = $arrThuongsanluong['sanluong_soluong'];
-					$data['thuong_san_luong']['dongia'] = $arrThuongsanluong['sanluong_dongia'];
+					$data['thuong_san_luong']['soluong_dd'] = $arrThuongsanluong['sanluong_soluong_dd'];
+					$data['thuong_san_luong']['dongia_dd'] = $arrThuongsanluong['sanluong_dongia_dd'];
+					$data['thuong_san_luong']['soluong_hh'] = $arrThuongsanluong['sanluong_soluong_hh'];
+					$data['thuong_san_luong']['dongia_hh'] = $arrThuongsanluong['sanluong_dongia_hh'];
 				}else{
 					$data['thuong_san_luong']['tieude'] = '';
-					$data['thuong_san_luong']['soluong'] = '';
-					$data['thuong_san_luong']['dongia'] = '';
+					$data['thuong_san_luong']['soluong_dd'] = '';
+					$data['thuong_san_luong']['dongia_dd'] = '';
+					$data['thuong_san_luong']['soluong_hh'] = '';
+					$data['thuong_san_luong']['dongia_hh'] = '';
 				}
 				$sale_id = $this->Sale->save($data);
 				if($sale_id){
@@ -1034,8 +1043,10 @@ class Sales extends Secure_Controller
 		$sale_info = $this->Sale->get_info($sale_id)->row_array();
 		//echo "<pre>";print_r($sale_info);echo "</pre>"; exit;
 		$arrSanluong['sanluong_tieude'] = $sale_info['sanluong_tieude'];
-		$arrSanluong['sanluong_soluong'] = $sale_info['sanluong_soluong'];
-		$arrSanluong['sanluong_dongia'] = $sale_info['sanluong_dongia'];
+		$arrSanluong['sanluong_soluong_dd'] = $sale_info['sanluong_soluong_dd'];
+		$arrSanluong['sanluong_dongia_dd'] = $sale_info['sanluong_dongia_dd'];
+		$arrSanluong['sanluong_soluong_hh'] = $sale_info['sanluong_soluong_hh'];
+		$arrSanluong['sanluong_dongia_hh'] = $sale_info['sanluong_dongia_hh'];
 		$this->sale_lib->set_thuongsanluong($arrSanluong);
 		// lay don hang
 		// ngay nhap don hang

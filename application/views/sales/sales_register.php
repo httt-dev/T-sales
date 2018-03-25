@@ -1,6 +1,13 @@
 <?php $this->load->view("partial/header"); 
 ?>
 
+<style>
+#sanluong_tieude{
+	position: relative;
+    top: 17px;
+}
+</style>
+
 <?php
 if (isset($error))
 {
@@ -262,28 +269,42 @@ if (isset($success))
 	$giatridonhangtrietkhau = $giatridonhang;
 	if(isset($customer) && $cart){
 		if(isset($thuong_san_luong['sanluong_tieude']) && $thuong_san_luong['sanluong_tieude'] !== ''){
-			$tieudosanluong = $thuong_san_luong['sanluong_tieude'];
+			$tieudesanluong = $thuong_san_luong['sanluong_tieude'];
 		}else{
-			$tieudosanluong = 'Thuởng sản lượng tháng ';
+			$tieudesanluong = 'Thuởng sản lượng tháng ';
 		}
-		if(isset($thuong_san_luong['sanluong_soluong']) && $thuong_san_luong['sanluong_soluong'] !== ''){
-			$sanluong_soluong = $thuong_san_luong['sanluong_soluong'];
+		// Dam dac
+		if(isset($thuong_san_luong['sanluong_soluong_dd']) && $thuong_san_luong['sanluong_soluong_dd'] !== ''){
+			$sanluong_soluong_dd = $thuong_san_luong['sanluong_soluong_dd'];
 		}else{
-			$sanluong_soluong = '';
+			$sanluong_soluong_dd = '';
 		}
-		if(isset($thuong_san_luong['sanluong_dongia']) && $thuong_san_luong['sanluong_dongia'] !== ''){
-			$sanluong_dongia = to_currency_no_money($thuong_san_luong['sanluong_dongia']);
+		if(isset($thuong_san_luong['sanluong_dongia_dd']) && $thuong_san_luong['sanluong_dongia_dd'] !== ''){
+			$sanluong_dongia_dd = $thuong_san_luong['sanluong_dongia_dd'];
 		}else{
-			$sanluong_dongia = '';
+			$sanluong_dongia_dd = '';
 		}
-		if($sanluong_soluong > 0 && $sanluong_soluong > 0){
+		// Hon hop
+		if(isset($thuong_san_luong['sanluong_soluong_hh']) && $thuong_san_luong['sanluong_soluong_hh'] !== ''){
+			$sanluong_soluong_hh = $thuong_san_luong['sanluong_soluong_hh'];
+		}else{
+			$sanluong_soluong_hh = '';
+		}
+		if(isset($thuong_san_luong['sanluong_dongia_hh']) && $thuong_san_luong['sanluong_dongia_hh'] !== ''){
+			$sanluong_dongia_hh = $thuong_san_luong['sanluong_dongia_hh'];
+		}else{
+			$sanluong_dongia_hh = '';
+		}
+		if($sanluong_dongia_dd > 0 || $sanluong_dongia_hh > 0){
 			$checked = 'checked';
-			$sanluong_thanhtien = $sanluong_soluong * $thuong_san_luong['sanluong_dongia'];
+			$sanluong_thanhtien_dd = $sanluong_soluong_dd * $sanluong_dongia_dd;
+			$sanluong_thanhtien_hh = $sanluong_soluong_hh * $sanluong_dongia_hh;
+			$sanluong_thanhtien = $sanluong_thanhtien_dd + $sanluong_thanhtien_hh;
 			$giatridonhang = $giatridonhang - $sanluong_thanhtien;
 
 		}else{
 			$checked = '';
-			$sanluong_thanhtien = '';
+			$sanluong_thanhtien_dd = $sanluong_thanhtien_hh = $sanluong_thanhtien = '';
 		}
 ?>
 <div class="col-xs-12">
@@ -295,18 +316,27 @@ if (isset($success))
 <table class="sales_table_100" id="thuongsanluong" style="display:none;margin-top: 2px; margin-bottom: 5px; padding: 1px; text-align: center;
 vertical-align: middle;">
 	<colgroup>
-		<col width="40%"><col width="8%"><col width="2%"><col width="5%"><col width="15%"><col width="2%"><col width="20%">
+		<col width="30%"><col width="10%"><col width="8%"><col width="2%"><col width="5%"><col width="15%"><col width="2%"><col width="20%">
 	</colgroup>
 	<tbody>
+	<?php echo form_open($controller_name."/update_thuongsanluong", array('class'=>'form-horizontal', 'id'=>'form_sanluong')); ?>
 		<tr>
-			<?php echo form_open($controller_name."/update_thuongsanluong", array('class'=>'form-horizontal', 'id'=>'form_sanluong')); ?>
-			<td><?php echo form_input(array('id' => 'sanluong_tieude','style'=>'width:90%;','name'=>'sanluong_tieude','size'=>'2', 'class'=>'form-control input-sm','placeholder'=>'Tiêu đề sản lượng', 'value'=>$tieudosanluong, 'tabindex'=>++$tabindex));?></td>
-			<td><?php echo form_input(array('id' => 'sanluong_soluong','style'=>'','placeholder'=>'Số lượng','name'=>'sanluong_soluong','size'=>'2', 'class'=>'form-control input-sm', 'value'=>$sanluong_soluong, 'tabindex'=>++$tabindex));?></td>
+			<td><?php echo form_input(array('id' => 'sanluong_tieude','style'=>'width:90%;position: relative;top: 17px;','name'=>'sanluong_tieude','size'=>'2', 'class'=>'form-control input-sm','placeholder'=>'Tiêu đề sản lượng', 'value'=>$tieudesanluong, 'tabindex'=>++$tabindex));?></td>
+			<td>Đậm đặc:</td>
+			<td><?php echo form_input(array('id' => 'sanluong_soluong_dd','style'=>'','placeholder'=>'Số lượng','name'=>'sanluong_soluong_dd','size'=>'2', 'class'=>'form-control input-sm', 'value'=>$sanluong_soluong_dd, 'tabindex'=>++$tabindex));?></td>
 			<td>kg</td><td></td>
-			<td><?php echo form_input(array('id' => 'sanluong_dongia','style'=>' margin-right: 9px;','placeholder'=>'Đơn giá','name'=>'sanluong_dongia','size'=>'2', 'class'=>'form-control input-sm', 'value'=>$sanluong_dongia, 'tabindex'=>++$tabindex));?></td><td>Đ</td>
-			<?php echo form_close(); ?>
-			<td ><?php echo "Thành tiền: ".to_currency($sanluong_thanhtien); ?></td>
+			<td><?php echo form_input(array('id' => 'sanluong_dongia_dd','style'=>' margin-right: 9px;','placeholder'=>'Đơn giá','name'=>'sanluong_dongia_dd','size'=>'2', 'class'=>'form-control input-sm', 'value'=>to_currency_no_money($sanluong_dongia_dd), 'tabindex'=>++$tabindex));?></td><td>Đ</td>
+			<td style="position: relative;top: 17px;"><?php echo "Thành tiền: ".to_currency($sanluong_thanhtien); ?></td>
 		</tr>
+		<tr>
+			<td></td>
+			<td>Hỗn hợp:</td>
+			<td><?php echo form_input(array('id' => 'sanluong_soluong_hh','style'=>'','placeholder'=>'Số lượng','name'=>'sanluong_soluong_hh','size'=>'2', 'class'=>'form-control input-sm', 'value'=>$sanluong_soluong_hh, 'tabindex'=>++$tabindex));?></td>
+			<td>kg</td><td></td>
+			<td><?php echo form_input(array('id' => 'sanluong_dongia_hh','style'=>' margin-right: 9px;','placeholder'=>'Đơn giá','name'=>'sanluong_dongia_hh','size'=>'2', 'class'=>'form-control input-sm', 'value'=>to_currency_no_money($sanluong_dongia_hh), 'tabindex'=>++$tabindex));?></td><td>Đ</td>
+			<td></td>
+		</tr>
+		<?php echo form_close(); ?>
 	</tbody>
 </table>
 
@@ -600,8 +630,10 @@ $(document).ready(function()
             $("#thuongsanluong").show();
         }else{
         	$("#thuongsanluong").hide();
-        	$("#sanluong_soluong").val('');
-        	$("#sanluong_dongia").val('');
+			$("#sanluong_soluong_dd").val('');
+        	$("#sanluong_dongia_dd").val('');
+        	$("#sanluong_soluong_hh").val('');
+        	$("#sanluong_dongia_hh").val('');
         	$("#sanluong_tieude").val('Thuởng sản lượng tháng ');
         	$('#set_uncheck_sanluong').submit();
         }
@@ -718,7 +750,46 @@ $(document).ready(function()
 		}
 	});
 
-	$("#sanluong_soluong").keypress(function(event)
+	$("#sanluong_soluong_dd").keypress(function(event)
+	{
+		if( event.which == 13 )
+		{
+			if(check_sanluong()){
+				$('#form_sanluong').submit();
+			}else{
+				alert('Tiêu đề, số lượng,đơn giá không được để trống');
+			}
+			
+		}
+	});
+
+	$("#sanluong_dongia_dd").keypress(function(event)
+	{
+		if( event.which == 13 )
+		{
+			if(check_sanluong()){
+				$('#form_sanluong').submit();
+			}else{
+				alert('Tiêu đề, số lượng,đơn giá không được để trống');
+			}
+			
+		}
+	});
+
+	$("#sanluong_soluong_hh").keypress(function(event)
+	{
+		if( event.which == 13 )
+		{
+			if(check_sanluong()){
+				$('#form_sanluong').submit();
+			}else{
+				alert('Tiêu đề, số lượng,đơn giá không được để trống');
+			}
+			
+		}
+	});
+
+	$("#sanluong_dongia_hh").keypress(function(event)
 	{
 		if( event.which == 13 )
 		{
@@ -744,21 +815,8 @@ $(document).ready(function()
 		}
 	});
 
-	$("#sanluong_dongia").keypress(function(event)
-	{
-		if( event.which == 13 )
-		{
-			if(check_sanluong()){
-				$('#form_sanluong').submit();
-			}else{
-				alert('Tiêu đề, số lượng,đơn giá không được để trống');
-			}
-			
-		}
-	});
-
 	function check_sanluong(){
-		if($("#sanluong_tieude").val() == '' || $("#sanluong_dongia").val() == '' || $("#sanluong_dongia").val() == ''){
+		if($("#sanluong_tieude").val() == '' || $("#sanluong_dongia_dd").val() == '' || $("#sanluong_dongia_dd").val() == '' || $("#sanluong_dongia_hh").val() == '' || $("#sanluong_dongia_hh").val() == ''){
 			return false;
 		}else{
 			return true;
@@ -839,7 +897,10 @@ $( function() {
     $("#vanchuyen_dg").keyup(function(e){
         $(this).val(formatmonney($(this).val()));
     });
-    $("#sanluong_dongia").keyup(function(e){
+    $("#sanluong_dongia_dd").keyup(function(e){
+        $(this).val(formatmonney($(this).val()));
+    });
+	$("#sanluong_dongia_hh").keyup(function(e){
         $(this).val(formatmonney($(this).val()));
     });
 })
