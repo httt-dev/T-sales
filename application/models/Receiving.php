@@ -286,13 +286,17 @@ class Receiving extends CI_Model
 		$this->db->join('people', 'people.person_id = suppliers.person_id','left');
 		$this->db->where('date(receiving_time) BETWEEN ' . $this->db->escape($filters['start_date']) . ' AND ' . $this->db->escape($filters['end_date']));
 		if($type == 1){
-			$this->db->where('type', 1);
-			$this->db->or_where('type', 0);
-		}elseif($type == 7){
-			$this->db->where('type', 7);
+			$this->db->group_start();
+				$this->db->where('type', 1);
+				$this->db->or_where('type', 0);
+				$this->db->group_end();
+		}elseif($type == 2){
+			$this->db->group_start();
+				$this->db->where('type', 2);
+				$this->db->or_where('type', 10);
+			$this->db->group_end();
 		}else{
-			$this->db->where('type', 2);
-			$this->db->or_where('type', 10);
+			$this->db->where('type', $type);
 		}
 		if(!empty($search))
 		{

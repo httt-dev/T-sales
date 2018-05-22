@@ -689,6 +689,7 @@ class Item extends CI_Model
 		if($search && $search !== '')
 		{
 			$this->db->like('items_prices_customer.description', $search);
+			$this->db->or_like('people.full_name', $search);
 		}
 		// avoid duplicated entries with same name because of inventory reporting multiple changes on the same item in the same date range
 		$this->db->group_by('items_prices_customer.id');
