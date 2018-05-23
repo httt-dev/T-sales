@@ -73,7 +73,7 @@ class Item_quantity extends CI_Model
     **/
     public function get_item_quantity($item_id, $location_id)
     {     
-        $tondauky =  $this->Giftcard->BC09_hanghoantonkho('kytruoc',$item_id, '2999-01-01');
+        $tondauky =  $this->Giftcard->BC09_hanghoantonkho('kytruoc',$item_id, '9999-01-01', '9999-01-01');
         return $tondauky;   
     }
     public function get_item_quantityreturn($item_id, $location_id)

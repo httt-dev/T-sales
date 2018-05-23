@@ -454,15 +454,7 @@ class Sale_lib
         {
             return FALSE;
         }
-		// Serialization and Description
-
-		//Get all items in the cart so far...
 		$items = $this->get_cart();
-
-        //We need to loop through all items in the cart.
-        //If the item is already there, get it's key($updatekey).
-        //We also need to get the next key that we are going to use in case we need to add the
-        //item to the cart. Since items can be deleted, we can't use a count. we use the highest key + 1.
         $maxkey = 0;                       //Highest key so far
         $itemalreadyinsale = FALSE;        //We did not find the item yet.
 		$insertkey = 0;                    //Key to use for new entry.
@@ -493,10 +485,8 @@ class Sale_lib
 		$customer_id = $this->get_customer();
 		// tinh gia hien tai dua vao khoang thoi gian
 		$arrResultprices = $this->CI->Item->get_prices_by_time_customer($item_id,$start_date,$customer_id);
-		//print_r($arrResultprices); exit;
-		//array/cart records are identified by $insertkey and item_id is just another field.
 		$price = $price != NULL ? $price : $arrResultprices['sale_price'];
-		//Item already exists and is not serialized, add to quantity
+		//Tinh hang tra lai
 		if($quantitytralai > 0){
 			$conlaitrongkho =	$this->CI->Item_quantity->get_item_quantity($item_id, 1);
 			$conlaitralai =	$this->CI->Item_quantity->get_item_quantityreturn($item_id, 1);
@@ -512,6 +502,7 @@ class Sale_lib
 		}
 		if(!$itemalreadyinsale)
 		{
+			//$conlaitrongkho = $conlaitrongkho + $conlaitralai;
             $item = array($insertkey => array(
                     'item_id' => $item_id,
                     'item_location' => 1,

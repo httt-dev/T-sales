@@ -808,20 +808,24 @@ class Giftcard extends CI_Model
 		 $this->db->order_by('receiving_time', 'desc');
 		 return $this->db->get()->result();
 	 }
-	 public function BC07_hanghoanhapkhotaiche($suppliers_id,$search,$start_date,$end_date,$id)
+	 public function BC07_hanghoanhapkhotaiche($suppliers_id,$search,$start_date,$end_date,$id,$type='trongky')
 	 {
+	 	 $return = array();
 		 $this->db->select('SUM(quantity) as soluong, SUM(quantity*input_prices*t_items.unit_weigh) as thanhtien');
 		 $this->db->from('t_receivings_items');
 		 $this->db->join('t_receivings', 't_receivings_items.receiving_id = t_receivings.receiving_id');
 		 $this->db->where('t_receivings.type', 3);
 		 $this->db->join('t_items', 't_items.id = t_receivings_items.item_id');
 		 $this->db->where('t_items.id', $id);
+		 if($type == 'kytruoc'){
+		 	$this->db->where('receiving_time <',$start_date);
+		 }else{
+		 	 $this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		 }
 		 if(!empty($suppliers_id) && $suppliers_id > 0)
 		 {
 			 $this->db->where('t_receivings.supplier_id', $suppliers_id);
 		 }
-		 $this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
- 
 		 if(!empty($search) && $search !== '')
 		 {
 			 $this->db->group_start();
@@ -829,19 +833,30 @@ class Giftcard extends CI_Model
 				 $this->db->or_like('t_items.item_number', $search);
 			 $this->db->group_end();
 		 }
-		 return $this->db->get()->result();
+		 $result = $this->db->get()->result();
+		 $return['soluong'] = 0;
+		 $return['thanhtien'] = 0;
+		 if ($result[0]->soluong > 0) {
+			$return['soluong'] = $result[0]->soluong;
+			$return['thanhtien'] = $result[0]->thanhtien;
+		}
+		 return $return;
 	 }
  
-	 public function BC07_hanghoanhapkhohuy($suppliers_id,$search,$start_date,$end_date,$id)
+	 public function BC07_hanghoanhapkhohuy($suppliers_id,$search,$start_date,$end_date,$id,$type="trongky")
 	 {
+	 	$return = array();
 		 $this->db->select('SUM(quantity) as soluong, SUM(quantity*sale_price*t_items.unit_weigh) as thanhtien');
 		 $this->db->from('t_sales_items');
 		 $this->db->join('t_sales', 't_sales_items.sale_id = t_sales.sale_id');
 		 $this->db->where('t_sales.type', 3);
 		 $this->db->join('t_items', 't_items.id = t_sales_items.item_id');
 		 $this->db->where('t_items.id', $id);
-		 $this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
- 
+		 if($type == 'kytruoc'){
+		 	$this->db->where('sale_time <',$start_date);
+		 }else{
+		 	 $this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		 }
 		 if(!empty($search) && $search !== '')
 		 {
 			 $this->db->group_start();
@@ -849,7 +864,14 @@ class Giftcard extends CI_Model
 				 $this->db->or_like('t_items.item_number', $search);
 			 $this->db->group_end();
 		 }
-		 return $this->db->get()->result();
+		 $result = $this->db->get()->result();
+		 $return['soluong'] = 0;
+		 $return['thanhtien'] = 0;
+		 if ($result[0]->soluong > 0) {
+			$return['soluong'] = $result[0]->soluong;
+			$return['thanhtien'] = $result[0]->thanhtien;
+		}
+		 return $return;
 	 }
  
 	 public function BC07_chitiethanghoanhapkho($item_id,$suppliers_id,$start_date,$end_date)
@@ -925,8 +947,9 @@ class Giftcard extends CI_Model
 	 * SUM(soluong_ban_t1 + soluong_tang_t1 + Số lượng_trả hàng nợ  – Số lượng_ gửi hang – Số lượng hàng khách trả lại
 	**/
 	
-	public function BC08_hanghoanxuatkhosanpham($item_id,$customer_id,$start_date,$end_date)
+	public function BC08_hanghoanxuatkhosanpham($item_id,$customer_id,$start_date,$end_date,$type="trongky")
 	{
+		$return = array();
 		$this->db->select('SUM((quantity + quantity_give - quantity_loan + quantity_loan_return) *input_prices * t_sales_items.unit_weigh) as thanhtien,SUM(quantity + quantity_give - quantity_loan + quantity_loan_return) as soluong,SUM((quantity + quantity_give - quantity_loan + quantity_loan_return)*t_sales_items.unit_weigh) as sokg');
 		$this->db->from('t_sales_items');
 		$this->db->join('t_sales', 't_sales.sale_id = t_sales_items.sale_id');
@@ -938,24 +961,48 @@ class Giftcard extends CI_Model
 		{
 			$this->db->where('t_sales.customer_id', $customer_id);
 		}
-		$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
-		return $this->db->get()->result();
+		if($type == 'kytruoc'){
+		 	$this->db->where('sale_time <',$start_date);
+		 }else{
+		 	$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		 }
+		$result = $this->db->get()->result();
+		$return['soluong'] = 0;
+		$return['thanhtien'] = 0;
+		$return['sokg'] = 0;
+		if ($result[0]->soluong) {
+			$return['soluong'] = $result[0]->soluong;
+			$return['thanhtien'] = $result[0]->thanhtien;
+			$return['sokg'] = $result[0]->sokg;
+		}
+
+		return $return;
 	}
 
-	public function BC08_hanghoatralai($item_id, $customer_id,$start_date,$end_date)
+	public function BC08_hanghoatralai($item_id, $customer_id,$start_date,$end_date,$type="trongky")
 	{
-		$this->db->select('SUM(quantity_return) as soluong_tralai, SUM(quantity_return*t_sales_items.unit_weigh) as sokg_tralai, SUM(sale_price*quantity_return*t_sales_items.unit_weigh) as thanhtien');
-		$this->db->from('sales');
-		$this->db->join('sales_items', 'sales_items.sale_id = sales.sale_id');
-		$this->db->join('items', 'items.id = sales_items.item_id');
-		$this->db->where('sales.type', 2);
-		$this->db->where('items.id', $item_id);
-		if(!empty($customer_id) && $customer_id > 0)
-		{
-			$this->db->where('sales.customer_id', $customer_id);
+		$return = array();
+		$this->db->select('SUM(quantity*input_prices*t_items.unit_weigh) as thanhtien,SUM(quantity) as soluong_tralai,SUM(quantity*t_items.unit_weigh) as sokg_tralai');
+		$this->db->from('t_receivings_items');
+		$this->db->join('t_receivings', 't_receivings_items.receiving_id = t_receivings.receiving_id');
+		$this->db->join('t_items', 't_items.id = t_receivings_items.item_id');
+		$this->db->where('t_receivings.type', 7);
+		$this->db->where('t_items.id', $item_id);
+		if($type == "kytruoc"){
+			$this->db->where('receiving_time <',$start_date);
+		}else{
+			$this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
 		}
-		$this->db->where('DATE(sale_time) BETWEEN ' .$this->db->escape($start_date). ' AND ' . $this->db->escape($end_date));
-		return $this->db->get()->result();
+		$result = $this->db->get()->result();
+		$return['soluong_tralai'] = 0;
+		$return['thanhtien'] = 0;
+		$return['sokg_tralai'] = 0;
+		if (isset($result[0]) && $result[0]->soluong_tralai) {
+			$return['soluong_tralai'] = $result[0]->soluong_tralai;
+			$return['thanhtien'] = $result[0]->thanhtien;
+			$return['sokg_tralai'] = $result[0]->sokg_tralai;
+		}
+		return $return;
 	}
 
 	public function BC08_chitiethanghoaxuatkho($item_id,$customer_id,$start_date,$end_date)
@@ -996,52 +1043,37 @@ class Giftcard extends CI_Model
 		return $this->db->get();
 	}
 
-	public function BC09_hanghoantonkho($type,$item_id,$start_date)
+	public function BC09_hanghoantonkho($type,$item_id,$start_date,$end_date)
 	{
-		// tong hang nhap ky truoc
-		$this->db->select('SUM(quantity) as nhapkytruoc');
-		$this->db->from('receivings_items');
-		$this->db->join('receivings', 'receivings_items.receiving_id = receivings.receiving_id');
-		$this->db->where('receivings_items.item_id', $item_id);
-		if($type == "kytruoc"){
-			$this->db->where('receiving_time <',$start_date);
-		}else{
-			$this->db->where('receiving_time >=',$start_date);
-		}
-		$this->db->group_start();
-		$this->db->where('type', 1);
-		$this->db->or_where('type', 0);
-		$this->db->group_end();
-		//$this->db->or_where('type', 0);
-		$kytruoc = $this->db->get()->result_array();
-		$soluongnhapkytruoc = $kytruoc[0]['nhapkytruoc'];
-		// ban ky truoc
-		$this->db->select('SUM(quantity) as bankytruoc');
-		$this->db->from('sales_items');
-		$this->db->join('sales', 'sales_items.sale_id = sales.sale_id');
-		$this->db->where('sales_items.item_id', $item_id);
-		if($type == "kytruoc"){
-			$this->db->where('sale_time <',$start_date);
-		}else{
-			$this->db->where('sale_time >=',$start_date);
-		}
-		
-		$this->db->where('type', 1);
-		$bankytruoc = $this->db->get()->result_array();
-		$soluongbankytruoc = $bankytruoc[0]['bankytruoc'];
-		$soluongtonkytruoc = $soluongnhapkytruoc - $soluongbankytruoc;
-		return $soluongtonkytruoc;
+		$suppliers_id = -1;
+		$search = '';
+		// HANG HOA NHAP KHO
+		$soluongnhapkho = $this->Giftcard->BC09_hanghoanhapkho($item_id,$start_date, $end_date,$type);
+		// Hang tai che
+		$taiches = $this->Giftcard->BC07_hanghoanhapkhotaiche($suppliers_id,$search,$start_date, $end_date, $item_id,$type);
+		$soluongnhapkho = $soluongnhapkho - $taiches['soluong'];
+		// Hang huy
+		$hanghuys = $this->Giftcard->BC07_hanghoanhapkhohuy($suppliers_id ,$search,$start_date, $end_date, $item_id,$type);
+		$soluongnhapkho = $soluongnhapkho - $hanghuys['soluong'];
+		// HANG HOA XUAT KHO
+		$soluongxuatkho = 0;
+		$xuatkhos = $this->Giftcard->BC08_hanghoanxuatkhosanpham($item_id, -1,$start_date, $end_date,$type);
+		$soluongxuatkho = $xuatkhos['soluong'];
+		$tralais = $this->Giftcard->BC08_hanghoatralai($item_id,$suppliers_id,$start_date, $end_date,$type);
+		$soluongxuatkho = $soluongxuatkho - $tralais['soluong_tralai'];
+		$soluongton = $soluongnhapkho - $soluongxuatkho;
+		return $soluongton;
 	}
 
-	public function BC09_hanghoantonkho_chuky($type,$item_id,$start_date,$end_date)
+	public function BC09_hanghoanhapkho($item_id,$start_date,$end_date,$type='trongky')
 	{
 		// tong hang nhap ky truoc
-		$this->db->select('SUM(quantity) as nhapkytruoc');
+		$this->db->select('SUM(quantity) as nhapkho');
 		$this->db->from('receivings_items');
 		$this->db->join('receivings', 'receivings_items.receiving_id = receivings.receiving_id');
 		$this->db->where('receivings_items.item_id', $item_id);
 		if($type == "kytruoc"){
-			$this->db->where('receiving_time <',$start_date);
+			$this->db->where('receiving_time <',$end_date);
 		}else{
 			$this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
 		}
@@ -1051,23 +1083,8 @@ class Giftcard extends CI_Model
 		$this->db->group_end();
 		//$this->db->or_where('type', 0);
 		$kytruoc = $this->db->get()->result_array();
-		$soluongnhapkytruoc = $kytruoc[0]['nhapkytruoc'];
-		// ban ky truoc
-		$this->db->select('SUM(quantity) as bankytruoc');
-		$this->db->from('sales_items');
-		$this->db->join('sales', 'sales_items.sale_id = sales.sale_id');
-		$this->db->where('sales_items.item_id', $item_id);
-		if($type == "kytruoc"){
-			$this->db->where('sale_time <',$start_date);
-		}else{
-			$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
-		}
-		
-		$this->db->where('type', 1);
-		$bankytruoc = $this->db->get()->result_array();
-		$soluongbankytruoc = $bankytruoc[0]['bankytruoc'];
-		$soluongtonkytruoc = $soluongnhapkytruoc - $soluongbankytruoc;
-		return $soluongtonkytruoc;
+		$soluongnhap = $kytruoc[0]['nhapkho'];
+		return $soluongnhap;
 	}
 
 	/** ----------------------------------------------------------------

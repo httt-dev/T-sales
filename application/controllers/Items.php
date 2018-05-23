@@ -41,7 +41,6 @@ class Items extends Secure_Controller
 						'no_description' => FALSE,
 						'search_custom' => FALSE,
 						'is_status' => TRUE);
-		
 		// check if any filter is set in the multiselect dropdown
 		$filledup = array_fill_keys($this->input->get('filters'), TRUE);
 
@@ -57,13 +56,11 @@ class Items extends Secure_Controller
 		foreach($items->result() as $item)
 		{
 			// tinh gia hien tai dua vao khoang thoi gian
-			
 			$arrResult = $this->Item->get_prices_by_time_customer($item->id,$start_date,$customer_id);
 			$item->sale_price = $arrResult['sale_price'];
 			$item->input_prices = $arrResult['input_prices'];
-			$item->tondauky = $this->Giftcard->BC09_hanghoantonkho('kytruoc',$item->id, $start_date);
+			$item->tondauky = $this->Giftcard->BC09_hanghoantonkho('kytruoc',$item->id, '9999-01-01', '9999-01-01');
 			$data_rows[] = get_item_data_row($item, $this);
-		
 		}
 		//echo "<pre>";print_r($data_rows);echo "</pre>";exit;
 		echo json_encode(array('total' => $total_rows, 'rows' => $data_rows));

@@ -335,8 +335,6 @@ class Sale extends CI_Model
 			$quantity = $item['quantity'];
 			$quantitytang = $item['quantitytang'];
 			// Update so luong
-			$quantity_instock = $this->Item_quantity->get_item_quantity($item['item_id'], $item['item_location']);
-			$quantityreturn_instock = $this->Item_quantity->get_item_quantityreturn($item['item_id'], $item['item_location']);
 			$total_quantity_sale =  $quantity + $quantitytang;
 			// kiem tra co check vao o tra lai hay ko
 			$arrchecked_returns = $this->sale_lib->get_checked_return();
@@ -348,31 +346,26 @@ class Sale extends CI_Model
 				}
 			}
 			if($checkreturn==='true'){
+				$quantityreturn_instock = $this->Item_quantity->get_item_quantityreturn($item['item_id'], $item['item_location']);
 				// neu tong so luong ban lon hon tong so luong con tra lai
 				if($total_quantity_sale > $quantityreturn_instock ){
+					$quantity_instock = $this->Item_quantity->get_item_quantity($item['item_id'], $item['item_location']);
 					$quantity_return = $quantityreturn_instock;
 					$soluongconlai = $quantity_instock - ($total_quantity_sale - $quantityreturn_instock);
-					$this->Item_quantity->save(array('quantity'		=> $soluongconlai,
-												  'quantity_return'		=> 0,
-	                                              'item_id'		=> $item['item_id'],
-	                                              'location_id'	=> $item['item_location']
-	                                              ), 
-												$item['item_id']
-												, $item['item_location']
-											);
+					$update = array('quantity'=> $soluongconlai,
+									'quantity_return'=> 0,
+	                                'item_id'=> $item['item_id'],
+	                                'location_id'=> $item['item_location']);
+					$this->Item_quantity->save($update,$item['item_id'],$item['item_location']);
 				}else{
 					$quantity_return = $total_quantity_sale;
 					$quantitytang = 0;
 					$soluongconlai = $quantityreturn_instock - $total_quantity_sale;
-					$this->Item_quantity->save(array('quantity_return'		=> $soluongconlai,
-	                                              'item_id'		=> $item['item_id'],
-	                                              'location_id'	=> $item['item_location']
-	                                              ), 
-												$item['item_id']
-												, $item['item_location']
-											);
+					$update = array('quantity_return'=> $soluongconlai,
+	                                'item_id'=> $item['item_id'],
+	                                'location_id'=> $item['item_location']);
+					$this->Item_quantity->save($update,$item['item_id'],$item['item_location']);
 				}
-			}else{
 			}
 			$sales_items_data = array(
 				'sale_id'			=> $sale_id,
@@ -463,14 +456,11 @@ class Sale extends CI_Model
 			// Update so luong
 			$item_quantityreturn = $this->Item_quantity->get_item_quantityreturn($item['item_id'], $item['item_location']);
 			$soluongconlai =$item_quantityreturn + $item['quantity'];
-			$this->Item_quantity->save(array('quantity_return'	=> $soluongconlai,
-                                              'item_id'		=> $item['item_id'],
-                                              'location_id'	=> $item['item_location']
-                                              ), 
-											$item['item_id']
-											, $item['item_location']
-										);
-			
+			$update = array(
+					'quantity_return'=> $soluongconlai,
+                    'item_id'=> $item['item_id'],
+                    'location_id'=> $item['item_location']);
+			$this->Item_quantity->save($update, $item['item_id'], $item['item_location']);
 			// if an items was deleted but later returned it's restored with this rule
 			if($item['quantity'] < 0)
 			{
@@ -712,6 +702,23 @@ class Sale extends CI_Model
 	{
 		// start a transaction to assure data integrity
 		$this->db->trans_start();
+		// Lay danh sach don hang da ban
+		$items = $this->Sale->get_info_itemp_sales($sale_id);
+		// Tru lai so luong tra lai
+		foreach($items as $item){
+			if($item){
+				$idItem = $item['item_id'];
+				$quantity_return = $item['quantity_return'];
+				$item_quantityreturn = $this->Item_quantity->get_item_quantityreturn($idItem, 1);
+				$soluongconlai =$item_quantityreturn - $quantity_return;
+				$updateReturn = array(
+									'quantity_return'=> $soluongconlai,
+	                                'item_id'=> $idItem,
+	                                'location_id'=> 1
+	                                );
+				$this->Item_quantity->save($updateReturn,$idItem,1);
+			}
+		}
 		// xoa tat ca bang ban hang
 		$this->db->delete('sales_items', array('sale_id' => $sale_id));
 		// delete sale itself

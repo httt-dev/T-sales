@@ -558,16 +558,12 @@ class Reports extends Secure_Controller
 			if ($mode == 'receive') {
 					// so luong hang tai che
 				$hangtaiches = $this->Giftcard->BC07_hanghoanhapkhotaiche($suppliers_id, $search, $start_date, $end_date, $sale->id);
-				if ($hangtaiches[0]->soluong > 0) {
-					$sale->soluong = $sale->soluong - $hangtaiches[0]->soluong;
-					$sale->thanhtien = $sale->thanhtien - $hangtaiches[0]->thanhtien;
-				}
+				$sale->soluong = $sale->soluong - $hangtaiches['soluong'];
+				$sale->thanhtien = $sale->thanhtien - $hangtaiches['thanhtien'];
 				// so luong hang huy
 				$hanghuys = $this->Giftcard->BC07_hanghoanhapkhohuy($suppliers_id, $search, $start_date, $end_date, $sale->id);
-				if ($hanghuys[0]->soluong > 0) {
-					$sale->soluong = $sale->soluong - $hanghuys[0]->soluong;
-					$sale->thanhtien = $sale->thanhtien - $hanghuys[0]->thanhtien;
-				}
+				$sale->soluong = $sale->soluong - $hanghuys['soluong'];
+				$sale->thanhtien = $sale->thanhtien - $hanghuys['thanhtien'];
 			}
 			$data_rows[] = (get_hanghoanhapkho_data_row($sale, $i, $this, $suppliers_id, $search, $start_date, $end_date, $mode));
 			$i++;
@@ -641,17 +637,13 @@ class Reports extends Secure_Controller
 			$soluong = 0;
 			$sokg = 0;
 			$hangxuatkho = $this->Giftcard->BC08_hanghoanxuatkhosanpham($item->id, $customer_id, $start_date, $end_date);
-			if ($hangxuatkho[0]->thanhtien) {
-				$thanhtien = $hangxuatkho[0]->thanhtien;
-				$soluong = $hangxuatkho[0]->soluong;
-				$sokg = $hangxuatkho[0]->sokg;
-			}
+			$thanhtien = $hangxuatkho['thanhtien'];
+			$soluong = $hangxuatkho['soluong'];
+			$sokg = $hangxuatkho['sokg'];
 			$hangtralais = $this->Giftcard->BC08_hanghoatralai($item->id, $customer_id , $start_date, $end_date);
-			if (isset($hangtralais[0]) && $hangtralais[0]->thanhtien) {
-				$thanhtien = $thanhtien - $hangtralais[0]->thanhtien;
-				$soluong = $soluong - $hangtralais[0]->soluong_tralai;
-				$sokg = $sokg - $hangtralais[0]->sokg_tralai;
-			}
+			$thanhtien = $thanhtien - $hangtralais['thanhtien'];
+			$soluong = $soluong - $hangtralais['soluong_tralai'];
+			$sokg = $sokg - $hangtralais['sokg_tralai'];
 			
 			if ($soluong !== 0) {
 				$tongsoluong = $tongsoluong + $soluong;
@@ -720,22 +712,16 @@ class Reports extends Secure_Controller
 		$controller_name = $CI->uri->segment(1);
 		foreach ($arrItems as $arrItem) {
 			// hang hoa ton kho trong ky
-			$tondauky = $this->Giftcard->BC09_hanghoantonkho_chuky('kytruoc',$arrItem['id'], $start_date,$end_date);
-			$tontrongky = $this->Giftcard->BC09_hanghoantonkho_chuky('trongky',$arrItem['id'], $start_date,$end_date);
-			if ($tondauky + $tontrongky > 0) {
-				$name = $arrItem['name'];
-				$id = $arrItem['id'];
-				$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
-				$result[$i]['ten_hang_hoa'] = $name;
-				$result[$i]['ton_ky_truoc'] = $tondauky;
-				$result[$i]['ton_trong_ky'] = $tontrongky;
-				$result[$i]['ton_tong'] = $tondauky + $tontrongky;
-				//$result[$i]['edit'] = anchor($controller_name."/chitiethangtonkho/$id/$start_date", '<span class="glyphicon glyphicon-info-sign icon-th"></span>',
-				///array('class'=>'modal-dlg'
-					//,'title'=>"Xem chi tiết tồn kho sản phẩm $name")
-				//);
-				$i++;
-			}
+			$tondauky = $this->Giftcard->BC09_hanghoantonkho('kytruoc',$arrItem['id'], $start_date,$end_date);
+			$tontrongky = $this->Giftcard->BC09_hanghoantonkho('trongky',$arrItem['id'], $start_date,$end_date);
+			$name = $arrItem['name'];
+			$id = $arrItem['id'];
+			$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
+			$result[$i]['ten_hang_hoa'] = $name;
+			$result[$i]['ton_ky_truoc'] = $tondauky;
+			$result[$i]['ton_trong_ky'] = $tontrongky;
+			$result[$i]['ton_tong'] = $tondauky + $tontrongky;
+			$i++;
 		}		
 		// tinh ton dau ky
 		$total_rows = count($result);
