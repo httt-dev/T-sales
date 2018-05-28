@@ -578,7 +578,7 @@ class Item extends CI_Model
 		$kytruoc = $this->db->get()->result_array();
 		$soluongnhapkytruoc = $kytruoc[0]['nhapkytruoc'];
 		// ban ky truoc
-		$this->db->select('SUM(quantity + quantity_give - quantity_loan + quantity_loan_return) as bankytruoc');
+		$this->db->select('SUM(quantity - quantity_return + quantity_give - quantity_loan + quantity_loan_return) as bankytruoc');
 		$this->db->from('sales_items');
 		$this->db->join('sales', 'sales_items.sale_id = sales.sale_id');
 		$this->db->join('items', 'items.id = sales_items.item_id');
@@ -588,15 +588,8 @@ class Item extends CI_Model
 		$bankytruoc = $this->db->get()->result_array();
 		$soluongbankytruoc = $bankytruoc[0]['bankytruoc'];
 		// tra lai ky truoc
-		$this->db->select('SUM(quantity) as tralaikytruoc');
-		$this->db->from('sales_items');
-		$this->db->join('sales', 'sales_items.sale_id = sales.sale_id');
-		$this->db->join('items', 'items.id = sales_items.item_id');
-		$this->db->where('items.packet_id', $item_id);
-		$this->db->where('sale_time <=',$start_date);
-		$this->db->where('type', 2);
-		$tralaikytruoc = $this->db->get()->result_array();
-		$soluongtralaikytruoc = $tralaikytruoc[0]['tralaikytruoc'];
+		$tralais = $this->Giftcard->BC08_hanghoatralai($item_id,-1,$start_date,'2999-01-01','kytruoc');
+		$soluongtralaikytruoc = $tralais['soluong_tralai'];
 		//echo $soluongbankytruoc; exit;
 		$soluongtonkytruoc = $soluongnhapkytruoc - ($soluongbankytruoc - $soluongtralaikytruoc);
 		return $soluongtonkytruoc;
