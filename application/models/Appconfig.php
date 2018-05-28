@@ -107,11 +107,16 @@ class Appconfig extends CI_Model
 		$this->db->where('pay_money <>', 0);
 		// order by name of item
 		$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($filters['start_date']) . ' AND ' . $this->db->escape($filters['end_date']));
-		//$this->db->group_start();	
-		if($search <> '' and ($persion_type == 'khach_hang' or $persion_type == 'nha_cung_cap')){
-			$this->db->like('people.full_name', $search);
-		}	
-			//$this->db->like('people.full_name', $search);
+
+		if(!empty($search))
+		{
+			$this->db->group_start();
+				$this->db->like('sales.comment', $search);
+				if($persion_type == 'khach_hang' || $persion_type == 'nha_cung_cap'){
+					$this->db->or_like('people.full_name', $search);
+				}
+			$this->db->group_end();
+		}
 		//$this->db->group_end();
 		$this->db->order_by('sale_time', 'DESC');
 		
@@ -228,9 +233,17 @@ class Appconfig extends CI_Model
 		$this->db->where('pay_money <>', 0);
 		// order by name of item
 		$this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($filters['start_date']) . ' AND ' . $this->db->escape($filters['end_date']));
-		if($search <> '' and ($persion_type == 'khach_hang' or $persion_type == 'nha_cung_cap')){
-			$this->db->like('people.full_name', $search);
-		}	
+
+		if(!empty($search))
+		{
+			$this->db->group_start();
+				$this->db->like('receivings.comment', $search);
+				if($persion_type == 'khach_hang' || $persion_type == 'nha_cung_cap'){
+					$this->db->or_like('people.full_name', $search);
+				}
+			$this->db->group_end();
+		}
+
 		if($rows > 0) 
 		{	
 			$this->db->limit($rows, $limit_from);

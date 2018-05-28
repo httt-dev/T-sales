@@ -903,7 +903,7 @@ class Sales extends Secure_Controller
 			if($mode=='taiche' || $mode =='tra_ncc'){
 				foreach($sale_ids as $sale_id)
 				{
-					$this->Receiving->delete($sale_id);
+					$this->Receiving->deleteTC($sale_id);
 					if($checkshow){
 						echo json_encode(array('success' => TRUE, 'message' => "Xoa thanh cong"));
 					}

@@ -236,6 +236,43 @@ class Receiving extends CI_Model
 		return $this->db->trans_status();
 	}
 
+	public function deleteTC($receiving_id, $update_inventory = TRUE)
+	{
+		// start a transaction to assure data integrity
+		$this->db->trans_start();
+
+		// Lay danh sach don hang da ban
+		$items = $this->get_receiving_items($receiving_id)->result_array();
+		// Tru lai so luong tra lai
+		foreach($items as $item){
+			if($item){
+				$idItem = $item['item_id'];
+				$quantity_return = $item['quantity'];
+				$item_quantityreturn = $this->Item_quantity->get_item_quantityreturn($idItem, 1);
+				$soluongconlai =$item_quantityreturn - $quantity_return;
+				$updateReturn = array(
+									'quantity_return'=> $soluongconlai,
+	                                'item_id'=> $idItem,
+	                                'location_id'=> 1
+	                                );
+				$this->Item_quantity->save($updateReturn,$idItem,1);
+			}
+		}
+
+		if($update_inventory)
+		{
+			if($items){
+				$this->db->delete('receivings_items', array('receiving_id' => $receiving_id));
+			}
+		}
+		// xoa don hang do di
+		$this->db->delete('receivings', array('receiving_id' => $receiving_id));
+		// execute transaction
+		$this->db->trans_complete();
+	
+		return $this->db->trans_status();
+	}
+
 	public function get_receiving_items($receiving_id)
 	{
 		$this->db->from('receivings_items');
