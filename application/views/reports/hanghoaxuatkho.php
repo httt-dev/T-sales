@@ -38,6 +38,13 @@ if(isset($error))
 					echo form_dropdown('category',$arr_listype,'', array('class' => 'form-control input-sm','id'=>'category')); ?>
 			</div>
 		</div>
+	<div class="form-group form-group-sm" style="margin-left: 5%;">
+			<?php echo form_label("Trả lại theo", 'type_return', array('class'=>'control-label col-xs-3')); ?>
+			<div class='col-xs-4'>
+					<?php 
+					echo form_dropdown('type_return',$arr_return,'', array('class' => 'form-control input-sm','id'=>'type_return')); ?>
+			</div>
+		</div>
 	<table id="table"></table>
 </div>
 
@@ -47,6 +54,10 @@ if(isset($error))
 $(document).ready(function()
 {
 	$( "#category" ).change(function() {
+	  // Check input( $( this ).val() ) for validity here
+	  table_support.refresh();
+	});
+	$( "#type_return" ).change(function() {
 	  // Check input( $( this ).val() ) for validity here
 	  table_support.refresh();
 	});
@@ -91,6 +102,7 @@ $(document).ready(function()
 				customer_id: $("#idcustomer").val(),
 				type: $("#type").val(),
 				mode: $("#mode").val(),
+				typeReturn: $("#type_return").val(),
 				category: $("#category").val(),
 				filters: $("#filters").val() || [""]
 			});

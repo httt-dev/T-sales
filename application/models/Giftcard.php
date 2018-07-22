@@ -766,7 +766,7 @@ class Giftcard extends CI_Model
 		 $this->db->join('t_items_packet', 't_items_packet.id = t_receivings_items.item_id');
 		 $this->db->join('t_people', 't_people.person_id = t_receivings.supplier_id');
 		 $this->db->where('t_receivings.type', 2);
-		 $this->db->or_where('type', 10);
+		 //$this->db->or_where('type', 10);
 		 if(!empty($suppliers_id) && $suppliers_id > 0)
 		 {
 			 $this->db->where('t_receivings.supplier_id', $suppliers_id);
@@ -1160,13 +1160,37 @@ class Giftcard extends CI_Model
 	// tinh hang tra lai cua mot khach hang
 	public function get_hangtralai_by_khachhang($customer_id, $people_manager,$start_date,$end_date,$category=''){
 		// hang tra lai hon hop
-		$this->db->select('SUM(quantity_return*t_sales_items.unit_weigh) as soluong_tralai, SUM(sale_price*quantity_return*t_sales_items.unit_weigh) as thanhtien');
+		$this->db->select('SUM(quantity_return) as sobao_tralai,SUM(quantity_return*t_sales_items.unit_weigh) as soluong_tralai, SUM(sale_price*quantity_return*t_sales_items.unit_weigh) as thanhtien');
 		$this->db->from('sales');
 		$this->db->join('sales_items', 'sales_items.sale_id = sales.sale_id');
 		$this->db->join('t_people', 't_people.person_id = t_sales.customer_id');
 		$this->db->join('items', 'items.id = sales_items.item_id');
 		$this->db->where('sales.type', 2);
-		if($category<> '')
+		if($category<> '' && $category<> 'all')
+		{
+			$this->db->where('items.category', $category);
+		}
+		if(!empty($customer_id) && $customer_id > 0)
+		{
+			$this->db->where('sales.customer_id', $customer_id);
+		}
+		if(!empty($people_manager) && $people_manager > 0)
+		{
+			$this->db->where('t_people.employees_id', $people_manager);
+		}
+		$this->db->where('DATE(sale_time) BETWEEN ' .$this->db->escape($start_date). ' AND ' . $this->db->escape($end_date));
+		return $this->db->get()->result_array();
+	}
+	public function get_hangtralai_by_khachhang_sp($item_id,$customer_id,$start_date,$end_date,$category=''){
+		// hang tra lai hon hop
+		$this->db->select('SUM(quantity_return) as sobao_tralai,SUM(quantity_return*t_sales_items.unit_weigh) as soluong_tralai, SUM(sale_price*quantity_return*t_sales_items.unit_weigh) as thanhtien');
+		$this->db->from('sales');
+		$this->db->join('sales_items', 'sales_items.sale_id = sales.sale_id');
+		$this->db->join('t_people', 't_people.person_id = t_sales.customer_id');
+		$this->db->join('items', 'items.id = sales_items.item_id');
+		$this->db->where('sales.type', 2);
+		$this->db->where('t_items.id', $item_id);
+		if($category<> '' && $category<> 'all')
 		{
 			$this->db->where('items.category', $category);
 		}

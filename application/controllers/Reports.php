@@ -140,6 +140,7 @@ class Reports extends Secure_Controller
 			$data['table_headers'] = hanghoanhapkho_table_headers();
 			$this->load->helper('listype');
 			$arr_listype = get_listtype_three();
+			$data['arr_return'] = get_type_return();
 			$data['arr_listype'] = $arr_listype;
 			$this->load->view('reports/hanghoaxuatkho', $data);
 		}
@@ -215,7 +216,8 @@ class Reports extends Secure_Controller
 		elseif ($type == 'hanghoaxuatkho') {
 			$customer_id = $this->input->get('customer_id');
 			$category = $this->input->get('category');
-			$this->BC08_hanghoaxuatkho($customer_id, $search, $start_date, $end_date, $category);
+			$typeReturn = $this->input->get('typeReturn');
+			$this->BC08_hanghoaxuatkho($customer_id, $search, $start_date, $end_date, $category, $typeReturn);
 		}
 		// BC09
 		elseif ($type == 'hanghoatonkho') {
@@ -616,7 +618,7 @@ class Reports extends Secure_Controller
 	 * ----------------------------------------------------------------
 	 **/
 
-	private function BC08_hanghoaxuatkho($customer_id, $search, $start_date, $end_date, $category)
+	private function BC08_hanghoaxuatkho($customer_id, $search, $start_date, $end_date, $category, $typereturn)
 	{
 		$items = $this->Item->get_all_item($search, $category);
 		$CI = &get_instance();
@@ -640,11 +642,17 @@ class Reports extends Secure_Controller
 			$thanhtien = $hangxuatkho['thanhtien'];
 			$soluong = $hangxuatkho['soluong'];
 			$sokg = $hangxuatkho['sokg'];
-			$hangtralais = $this->Giftcard->BC08_hanghoatralai($item->id, $customer_id , $start_date, $end_date);
+			if($typereturn == 'tra_lai_kh'){
+				$arrReturn = $this->Giftcard->get_hangtralai_by_khachhang_sp($item->id,$customer_id , $start_date, $end_date, $category);
+				$hangtralais['thanhtien'] = $arrReturn[0]['thanhtien'];
+				$hangtralais['soluong_tralai'] = $arrReturn[0]['sobao_tralai'];
+				$hangtralais['sokg_tralai'] = $arrReturn[0]['soluong_tralai'];
+			}else{
+				$hangtralais = $this->Giftcard->BC08_hanghoatralai($item->id, $customer_id , $start_date, $end_date);
+			}
 			$thanhtien = $thanhtien - $hangtralais['thanhtien'];
 			$soluong = $soluong - $hangtralais['soluong_tralai'];
 			$sokg = $sokg - $hangtralais['sokg_tralai'];
-			
 			if ($soluong !== 0) {
 				$tongsoluong = $tongsoluong + $soluong;
 				$tongtien = $tongtien + $thanhtien;
@@ -656,7 +664,7 @@ class Reports extends Secure_Controller
 					'so_kg' => $sokg . ' Kg',
 					'gia_tri' => to_currency($thanhtien),
 					'edit' => anchor(
-						$controller_name . "/BC08_chitiethanghoaxuatkho/$item->id/$customer_id/$start_date/$end_date/$category",
+						$controller_name . "/BC08_chitiethanghoaxuatkho/$item->id/$customer_id/$start_date/$end_date/$category/$typereturn",
 						'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
 						array('class' => 'modal-dlg', 'title' => "Xem chi tiết sản phẩm   $item->name")
 					)
@@ -685,12 +693,20 @@ class Reports extends Secure_Controller
 		echo json_encode(array('total' => $total_rows, 'rows' => $data_rows));
 	}
 
-	public function BC08_chitiethanghoaxuatkho($item_id = -1, $customer_id = -1, $start_date, $end_date)
+	public function BC08_chitiethanghoaxuatkho($item_id = -1, $customer_id = -1, $start_date, $end_date,$typeReturn)
 	{
 			// hang hoa xuat kho
 		$data['datas'] = $this->Giftcard->BC08_chitiethanghoaxuatkho($item_id, $customer_id, $start_date, $end_date);
 			// chi tiet hang tra lai nha cung cap
-		$data['hangtralai'] = $this->Giftcard->BC08_hanghoatralai($item_id, $customer_id , $start_date, $end_date);
+		if($typeReturn == 'tra_lai_kh'){
+			$arrReturn = $this->Giftcard->get_hangtralai_by_khachhang_sp($item_id,$customer_id , $start_date, $end_date, "");
+			$data['hangtralai']['thanhtien'] = $arrReturn[0]['thanhtien'];
+			$data['hangtralai']['soluong_tralai'] = $arrReturn[0]['sobao_tralai'];
+			$data['hangtralai']['sokg_tralai'] = $arrReturn[0]['soluong_tralai'];
+		}else{
+			$data['hangtralai'] = $this->Giftcard->BC08_hanghoatralai($item_id, $customer_id , $start_date, $end_date);
+		}
+		
 		//echo "<pre>"; print_r($data); echo "</pre>"; exit;
 		$this->load->view("reports/chitiethanghoaxuatkho", $data);
 	}

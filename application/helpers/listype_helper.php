@@ -42,6 +42,15 @@ function get_listtype_three()
 	return $arrTypeItem;
 }
 
+function get_type_return()
+{
+	$arrTypeItem = array(
+		'tra_lai_ncc' => 'Trả lại nhà cung cấp',
+		'tra_lai_kh' => 'Trả lại khách hàng'
+	);
+	return $arrTypeItem;
+}
+
 function get_quycach()
 {
 	$arrTypeItem = array(
