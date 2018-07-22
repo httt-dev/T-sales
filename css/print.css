@@ -2,6 +2,10 @@
     margin-left: 150px;
     width: 80%;
 }
+#receipt_wrapper {
+    width: 95%;
+    margin-left: 20px;
+}
 .print_header1 {
     color: windowtext;
     font-family: "Times New Roman",serif;
