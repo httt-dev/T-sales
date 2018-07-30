@@ -197,9 +197,10 @@ function get_hanghoaxuatkho_data_last_row($sales, $controller)
 		$headers = array(
 			array('ma_hang_hoa' => "Mã hàng hóa"),
 			array('ten_hang_hoa' => "Tên hàng hóa"),
-			array('ton_ky_truoc' => "Tồng kỳ trước"),
-			array('ton_trong_ky' => "Tồng trong kỳ"),
-			array('ton_tong' => "Tổng kg Tồn")
+			array('ton_ky_truoc' => "Tồn đầu kỳ"),
+			array('nhap_trong_ky' => "Nhập trong kỳ"),
+			array('xuat_trong_ky' => "Xuất trong kỳ"),
+			array('ton_tong' => "Tồn cuối kỳ")
 		);
 		
 

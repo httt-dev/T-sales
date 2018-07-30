@@ -1045,6 +1045,7 @@ class Giftcard extends CI_Model
 
 	public function BC09_hanghoantonkho($type,$item_id,$start_date,$end_date)
 	{
+		$arrReturn = array();
 		$suppliers_id = -1;
 		$search = '';
 		// HANG HOA NHAP KHO
@@ -1062,7 +1063,10 @@ class Giftcard extends CI_Model
 		$tralais = $this->Giftcard->BC08_hanghoatralai($item_id,$suppliers_id,$start_date, $end_date,$type);
 		$soluongxuatkho = $soluongxuatkho - $tralais['soluong_tralai'];
 		$soluongton = $soluongnhapkho - $soluongxuatkho;
-		return $soluongton;
+		$arrReturn['tong_nhap'] = $soluongnhapkho;
+		$arrReturn['tong_xuat'] = $soluongxuatkho;
+		$arrReturn['ton_kho'] = $soluongton;
+		return $arrReturn;
 	}
 
 	public function BC09_hanghoanhapkho($item_id,$start_date,$end_date,$type='trongky')
@@ -1073,7 +1077,7 @@ class Giftcard extends CI_Model
 		$this->db->join('receivings', 'receivings_items.receiving_id = receivings.receiving_id');
 		$this->db->where('receivings_items.item_id', $item_id);
 		if($type == "kytruoc"){
-			$this->db->where('receiving_time <',$end_date);
+			$this->db->where('receiving_time <',$start_date);
 		}else{
 			$this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
 		}
@@ -1083,7 +1087,11 @@ class Giftcard extends CI_Model
 		$this->db->group_end();
 		//$this->db->or_where('type', 0);
 		$kytruoc = $this->db->get()->result_array();
-		$soluongnhap = $kytruoc[0]['nhapkho'];
+		if($kytruoc[0]['nhapkho']){
+			$soluongnhap = $kytruoc[0]['nhapkho'];
+		}else{
+			$soluongnhap = 0;
+		}
 		return $soluongnhap;
 	}
 

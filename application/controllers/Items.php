@@ -59,7 +59,8 @@ class Items extends Secure_Controller
 			$arrResult = $this->Item->get_prices_by_time_customer($item->id,$start_date,$customer_id);
 			$item->sale_price = $arrResult['sale_price'];
 			$item->input_prices = $arrResult['input_prices'];
-			$item->tondauky = $this->Giftcard->BC09_hanghoantonkho('kytruoc',$item->id, '9999-01-01', '9999-01-01');
+			$arrTonTrongky = $this->Giftcard->BC09_hanghoantonkho('trongky',$item->id, '1900-01-01', $start_date);
+			$item->tondauky = $arrTonTrongky['ton_kho'];
 			$data_rows[] = get_item_data_row($item, $this);
 		}
 		//echo "<pre>";print_r($data_rows);echo "</pre>";exit;

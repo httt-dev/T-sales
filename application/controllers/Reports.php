@@ -722,22 +722,27 @@ class Reports extends Secure_Controller
 		$arrItems = $this->Giftcard->BC09_search_tonkho($item_id)->result_array();
 		$start_date = str_replace('/', '-', $start_date);
 		$start_date = date("Y-m-d", strtotime($start_date));
+		$end_date = str_replace('/', '-', $end_date);
+		$end_date = date("Y-m-d", strtotime($end_date));
 		$result = array();
 		$i = 0;
 		$CI = &get_instance();
 		$controller_name = $CI->uri->segment(1);
 		foreach ($arrItems as $arrItem) {
 			// hang hoa ton kho trong ky
-			$tondauky = $this->Giftcard->BC09_hanghoantonkho('kytruoc',$arrItem['id'], $start_date,$end_date);
-			$tontrongky = $this->Giftcard->BC09_hanghoantonkho('trongky',$arrItem['id'], $start_date,$end_date);
+			$arrDauky = $this->Giftcard->BC09_hanghoantonkho('kytruoc',$arrItem['id'], $start_date,$end_date);
+			$arrTrongky = $this->Giftcard->BC09_hanghoantonkho('trongky',$arrItem['id'], $start_date,$end_date);
 			$name = $arrItem['name'];
 			$id = $arrItem['id'];
-			$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
-			$result[$i]['ten_hang_hoa'] = $name;
-			$result[$i]['ton_ky_truoc'] = $tondauky;
-			$result[$i]['ton_trong_ky'] = $tontrongky;
-			$result[$i]['ton_tong'] = $tondauky + $tontrongky;
-			$i++;
+			if($arrDauky['ton_kho'] + $arrTrongky['ton_kho']){
+				$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
+				$result[$i]['ten_hang_hoa'] = $name;
+				$result[$i]['ton_ky_truoc'] = $arrDauky['ton_kho'];
+				$result[$i]['nhap_trong_ky'] = $arrTrongky['tong_nhap'];
+				$result[$i]['xuat_trong_ky'] = $arrTrongky['tong_xuat'];
+				$result[$i]['ton_tong'] = $arrDauky['ton_kho'] + $arrTrongky['ton_kho'];
+				$i++;
+			}
 		}		
 		// tinh ton dau ky
 		$total_rows = count($result);
