@@ -40,7 +40,6 @@ class Items_price_customer extends Secure_Controller
 		//var_dump($filters);
 		$item_id = $this->item_lib->get_item_price();
 		$items = $this->Item->search_prices_customer($item_id,$search, $filters, $limit, $offset, $sort, $order);
-
 		//echo $items; exit;
 		$total_rows = $this->Item->get_found_search_prices_customer_rows($item_id,$search, $filters);
 		

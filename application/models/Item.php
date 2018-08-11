@@ -681,8 +681,10 @@ class Item extends CI_Model
 		//$this->db->where('items.status', $filters['is_status']);
 		if($search && $search !== '')
 		{
-			$this->db->like('items_prices_customer.description', $search);
-			$this->db->or_like('people.full_name', $search);
+			$this->db->group_start();
+				$this->db->like('items_prices_customer.description', $search);
+				$this->db->or_like('people.full_name', $search);
+			$this->db->group_end();
 		}
 		// avoid duplicated entries with same name because of inventory reporting multiple changes on the same item in the same date range
 		$this->db->group_by('items_prices_customer.id');
@@ -694,6 +696,7 @@ class Item extends CI_Model
 		{	
 			$this->db->limit($rows, $limit_from);
 		}
+		$this->db->order_by('start_date', 'desc');
 		//echo $this->db->last_query();
 		return $this->db->get();
 	}

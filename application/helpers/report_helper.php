@@ -94,7 +94,9 @@ function hanghoaxuatkhobaobi_table_headers()
 		array('ma_hang_hoa' => "Mã hàng hóa"),
 		array('te_hang_hoa' => "Tên hàng hóa"),
 		array('so_luong' => "Số lượng bao"),
-		//array('gia_tri' => "Giá trị")
+		array('so_kg' => "Số  kg"),
+		array('gia_hien_tai' => "Giá hiện tại"),
+		array('gia_tri' => "Giá trị")
 	);
 	
 

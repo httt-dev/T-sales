@@ -1,1 +1,1 @@
-UPDATE `t_item_quantities` SET `quantity_return`= 0 WHERE 1
+TER TABLE `t_sales_items` ADD `input_packet_prices` DECIMAL(15,2) NULL AFTER `input_prices`;

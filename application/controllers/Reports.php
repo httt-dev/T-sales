@@ -766,7 +766,6 @@ class Reports extends Secure_Controller
 		$tongtien = 0;
 		foreach ($items as $item)
 			{
-			//echo "<pre>"; print_r($item); echo "</pre>"; exit;
 			$thanhtien = 0;
 			$soluong = 0;
 			$sokg = 0;
@@ -780,15 +779,19 @@ class Reports extends Secure_Controller
 			}
 			
 			if ($soluong !== 0) {
+				$arrResult = $this->Item_kit->get_packet_price_by_time($item->id,date("Y/m/d"));
+				$input_prices = $arrResult['input_prices'];
 				$tongsoluong = $tongsoluong + $soluong;
+				$thanhtien = $soluong * $input_prices;
 				$tongtien = $tongtien + $thanhtien;
 				$tongkg =$tongkg+$sokg;
 				$data_rows[$i] = array(
 					'ma_hang_hoa' => $item->item_number,
 					'te_hang_hoa' => $item->name,
 					'so_luong' => $soluong . ' bao',
-					//'so_kg' => $sokg . ' Kg',
-					//'gia_tri' => to_currency($thanhtien),
+					'so_kg' => ($item->unit_weight * $soluong) . ' kg',
+					'gia_hien_tai' => to_currency($input_prices),
+					'gia_tri' => to_currency($thanhtien),
 					'edit' => anchor(
 						$controller_name . "/BC10_chitiethanghoaxuatkhobaobi/$item->id/$start_date/$end_date",
 						'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
