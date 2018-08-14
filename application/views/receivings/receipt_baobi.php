@@ -17,7 +17,7 @@ if (isset($error_message))
 </div>
 
 <link rel="stylesheet" type="text/css" href="css/print.css">
-<div id="receipt_wrapper" style="width: 80%; margin-left:80px !important;">
+<div id="receipt_wrapper">
 	<table  style="margin-left:15%; border: none">
 		<colgroup>
 			<col width="20%"><col width="80%">

@@ -1112,14 +1112,24 @@ class Giftcard extends CI_Model
 
 	public function BC10_hanghoatralai($item_id,$start_date,$end_date)
 	{
-		$this->db->select('SUM(quantity) as soluong');
+		$this->db->select('SUM(quantity_return) as soluong');
 		$this->db->from('t_sales_items');
 		$this->db->join('t_sales', 't_sales.sale_id = t_sales_items.sale_id');
 		$this->db->join('t_items', 't_items.id = t_sales_items.item_id');
-		$this->db->join('t_people', 't_people.person_id = t_sales.customer_id');
 		$this->db->where('t_sales.type', 2);
 		$this->db->where('t_items.packet_id', $item_id);
 		$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		return $this->db->get()->result();
+	}
+
+	public function BC10_hanghoasangbao($item_id,$start_date,$end_date)
+	{
+		$this->db->select('SUM(t_receivings_items.quantity) as soluong');
+		$this->db->from('t_receivings_items');
+		$this->db->join('t_receivings', 't_receivings.receiving_id = t_receivings_items.receiving_id');
+		$this->db->where('t_receivings.type', 10);
+		$this->db->where('t_receivings_items.item_id', $item_id);
+		$this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
 		return $this->db->get()->result();
 	}
 

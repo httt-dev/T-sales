@@ -773,17 +773,23 @@ class Reports extends Secure_Controller
 			if ($hangxuatkho[0]->soluong) {
 				$soluong = $hangxuatkho[0]->soluong;
 			}
-			$hangtralais = $this->Giftcard->BC10_hanghoatralai($item->id, $start_date, $end_date);
-			if ($hangtralais[0]->soluong) {
-				$soluong = $soluong - $hangtralais[0]->soluong;
-			}
-			
 			if ($soluong !== 0) {
+				// Tru so luong tra lai
+				$hangtralais = $this->Giftcard->BC10_hanghoatralai($item->id, $start_date, $end_date);
+				if ($hangtralais[0]->soluong) {
+					$soluong = $soluong - $hangtralais[0]->soluong;
+				}
+				// hang hoa nhap bao bi co gia tri bang 0
+				$hangsangbaos = $this->Giftcard->BC10_hanghoasangbao($item->id, $start_date, $end_date);
+				if ($hangsangbaos[0]->soluong) {
+					$soluong = $soluong - $hangsangbaos[0]->soluong;
+				}
 				$arrResult = $this->Item_kit->get_packet_price_by_time($item->id,date("Y/m/d"));
 				$input_prices = $arrResult['input_prices'];
 				$tongsoluong = $tongsoluong + $soluong;
 				$thanhtien = $soluong * $input_prices;
 				$tongtien = $tongtien + $thanhtien;
+				$sokg = ($item->unit_weight * $soluong);
 				$tongkg =$tongkg+$sokg;
 				$data_rows[$i] = array(
 					'ma_hang_hoa' => $item->item_number,
@@ -823,7 +829,17 @@ class Reports extends Secure_Controller
 			// hang hoa xuat kho
 		$data['datas'] = $this->Giftcard->BC10_chitiethanghoaxuatkho($item_id, $start_date, $end_date);
 			// chi tiet hang tra lai nha cung cap
-		$data['hangtralai'] = $this->Giftcard->BC10_hanghoatralai($item_id, $start_date, $end_date);
+		$data['hangtralai'] = 0;
+		$hangtralais = $this->Giftcard->BC10_hanghoatralai($item_id, $start_date, $end_date);
+		if ($hangtralais[0]->soluong) {
+			$data['hangtralai'] = $hangtralais[0]->soluong;
+		}
+		// Hang hoa sang bao
+		$data['hangsangbao'] = 0;
+		$hangsangbao = $this->Giftcard->BC10_hanghoasangbao($item_id, $start_date, $end_date);
+		if ($hangsangbao[0]->soluong) {
+			$data['hangsangbao'] = $hangsangbao[0]->soluong;
+		}
 		//echo "<pre>"; print_r($data); echo "</pre>"; exit;
 		$this->load->view("reports/chitiethanghoaxuatkho", $data);
 	}

@@ -35,7 +35,7 @@ $(document).ready(function()
 </script>
 
 <link rel="stylesheet" type="text/css" href="css/print.css">
-<div id="receipt_wrapper" style="width: 85%;margin-left: 120px;">
+<div id="receipt_wrapper">
 	<table  style="margin-left:15%; border: none">
 		<colgroup>
 			<col width="20%"><col width="80%">

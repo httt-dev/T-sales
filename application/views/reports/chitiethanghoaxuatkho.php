@@ -57,13 +57,20 @@
                 </tr>
                 <tr>
                 <td colspan="2"> Tổng trả lại</td>
-                <td><?php echo $hangtralai['soluong_tralai'] ?></td>
+                <td><?php echo $hangtralai?></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>
+                <tr>
+                <td colspan="2"> Tổng sang bao</td>
+                <td><?php echo $hangsangbao?></td>
                 <td></td>
                 <td></td>
                 <td></td>
                 </tr>
                 <td colspan="2"> Tổng</td>
-                <td><?php echo $tongsoluong - $hangtralai['soluong_tralai'] ?> bao</td>
+                <td><?php echo $tongsoluong - $hangtralai -  $hangsangbao?> bao</td>
                 <td></td>
                 <td></td>
                 <td></td>

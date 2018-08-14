@@ -113,7 +113,7 @@ class Item_kits extends Secure_Controller
 		$item_kit_data = array(
 			'name' => $this->input->post('name'),
 			'item_number' => $this->input->post('item_number'),
-			'item_number' => $this->input->post('item_number'),
+			'unit_weight' => $this->input->post('unit_weight'),
 			'quantities' => $this->input->post('quantities'),
 			'description' => $this->input->post('description')
 		);
