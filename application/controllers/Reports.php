@@ -708,7 +708,7 @@ class Reports extends Secure_Controller
 		}
 		
 		//echo "<pre>"; print_r($data); echo "</pre>"; exit;
-		$this->load->view("reports/chitiethanghoaxuatkho", $data);
+		$this->load->view("reports/chitietsanphamxuatkho", $data);
 	}
 
 	/** ----------------------------------------------------------------
