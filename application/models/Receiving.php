@@ -222,6 +222,9 @@ class Receiving extends CI_Model
 
 		if($update_inventory)
 		{
+			if($update_inventory == true){
+				$this->Inventory->deleteSalesLog('delete','sale','tra_ncc',$receiving_id);
+			}
 			// Xoa hang hoa cu
 			$items = $this->get_receiving_items($receiving_id)->result_array();
 			if($items){

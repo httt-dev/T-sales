@@ -938,4 +938,17 @@ function get_item_price_customer_data_row($item, $controller)
 		)
 		);
 }
+function get_logs_manage_table_headers()
+{
+	$CI =& get_instance();
+
+	$headers = array(
+		array('name_people' => 'Tên Người dùng'),
+		array('action' => "Hành động"),
+		array('content' => "Nội dung hành động"),
+		array('date' => "Ngày thực hiện")
+	);
+	
+	return transform_headers($headers);
+}
 ?>

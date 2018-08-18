@@ -525,6 +525,10 @@ class Sales extends Secure_Controller
 				}
 				// In mau phieu ban hang
 			}
+			// Luu lich su Log
+			if($sale_id_old > 0){
+				$this->Inventory->salesLog('edit','sale',$mode,$sale_id);
+			}
 			$this->sale_lib->clear_all();
 		//}else{
 			//$this->_reload();
@@ -898,8 +902,12 @@ class Sales extends Secure_Controller
 	{
 		$employee_id = $this->Employee->get_logged_in_employee_info()->person_id;
 		$sale_ids = $sale_id == -1 ? $this->input->post('ids') : array($sale_id);
+		$saveId = $sale_ids[0];
 		$mode = $this->sale_lib->get_mode();
 		if(sizeof($sale_ids) == 1){
+			if($update_inventory == true){
+				$this->Inventory->deleteSalesLog('delete','sale',$mode,$saveId);
+			}
 			if($mode=='taiche' || $mode =='tra_ncc'){
 				foreach($sale_ids as $sale_id)
 				{

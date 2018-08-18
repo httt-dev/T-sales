@@ -1110,6 +1110,18 @@ class Giftcard extends CI_Model
 		return $this->db->get()->result();
 	}
 
+	public function BC10_hanghoataiche($item_id,$start_date,$end_date)
+	{
+		$this->db->select('SUM(t_receivings_items.quantity) as soluong');
+		$this->db->from('t_receivings_items');
+		$this->db->join('t_receivings', 't_receivings.receiving_id = t_receivings_items.receiving_id');
+		$this->db->join('items', 'items.id = t_receivings_items.item_id');
+		$this->db->where('t_receivings.type', 3);
+		$this->db->where('items.packet_id', $item_id);
+		$this->db->where('DATE(receiving_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		return $this->db->get()->result();
+	}
+
 	public function BC10_hanghoatralai($item_id,$start_date,$end_date)
 	{
 		$this->db->select('SUM(quantity_return) as soluong');

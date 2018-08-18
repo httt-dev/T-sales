@@ -29,6 +29,19 @@ class Employees extends Persons
 		//$data['themes'] = $this->_themes();
 		$this->load->view("employees/config", $data);
 	}
+
+	public function logs(){
+		$allPeoples = $this->Employee->getalls();
+			$arrPeople = array();
+			$arrPeople[''] = "-- Chọn người dùng --";
+			foreach($allPeoples as $allPeople){
+				$arrPeople[$allPeople['person_id']] = $allPeople['full_name'];
+			}
+		$data['allpeople'] = $arrPeople;
+		$data['table_headers'] = $this->xss_clean(get_logs_manage_table_headers());
+		$this->load->view("employees/logs", $data);
+	}
+
 	/*
 	Returns employee table data rows. This will be called with AJAX.
 	*/
@@ -52,6 +65,43 @@ class Employees extends Persons
 		$data_rows = $this->xss_clean($data_rows);
 
 		echo json_encode(array('total' => $total_rows, 'rows' => $data_rows));
+	}
+
+	public function searchLog()
+	{
+		$search = $this->input->get('search');
+		$limit  = $this->input->get('limit');
+		$offset = $this->input->get('offset');
+		$people  = $this->input->get('people_manager');
+		$type  = $this->input->get('persion_type');
+		$statDate = $this->input->get('start_date');
+		$fromdate = $this->input->get('end_date');
+
+		$data_rows = $this->Inventory->searchLogs(
+			$search,$limit,$offset,$people,$type,$statDate,$fromdate
+		);
+		$i = 0;
+		foreach($data_rows as $data_row){
+			$content = '';
+			// Neu la dang nhap
+			if($data_row['action'] == 'login'){
+				$data_rows[$i]['action'] = 'Đăng nhập';
+				$content = ' Đã đăng nhập';
+			}
+			// Neu la hieu chinh
+			if($data_row['action'] == 'edit'){
+				$data_rows[$i]['action'] = 'Sửa';
+				$content = $this->Inventory->getInforEditSale($data_row['order_id'],$data_row['type']);
+			}
+			// Neu la xoa
+			if($data_row['action'] == 'delete'){
+				$data_rows[$i]['action'] = 'Xóa';
+				$content = $data_row['type'];
+			}
+			$data_rows[$i]['content'] = $content;
+			$i++;
+		}
+		echo json_encode(array('rows' => $data_rows));
 	}
 	
 	/*

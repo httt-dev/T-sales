@@ -90,6 +90,8 @@ class Login extends CI_Controller
 		// dem so luong ngay sinh
 		$counts = $this->Customer->countBrithday();
 		$this->session->set_userdata('number_brithday', $counts[0]['tongso']);
+		// Luu log dang nhap
+		$this->Inventory->loginLog();
 		return TRUE;		
 	}
 }

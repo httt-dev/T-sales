@@ -784,6 +784,11 @@ class Reports extends Secure_Controller
 				if ($hangsangbaos[0]->soluong) {
 					$soluong = $soluong - $hangsangbaos[0]->soluong;
 				}
+				// Tru hang tai che
+				$hangtaiches = $this->Giftcard->BC10_hanghoataiche($item->id, $start_date, $end_date);
+				if ($hangtaiches[0]->soluong) {
+					$soluong = $soluong - $hangtaiches[0]->soluong;
+				}
 				$arrResult = $this->Item_kit->get_packet_price_by_time($item->id,date("Y/m/d"));
 				$input_prices = $arrResult['input_prices'];
 				$tongsoluong = $tongsoluong + $soluong;
@@ -839,6 +844,12 @@ class Reports extends Secure_Controller
 		$hangsangbao = $this->Giftcard->BC10_hanghoasangbao($item_id, $start_date, $end_date);
 		if ($hangsangbao[0]->soluong) {
 			$data['hangsangbao'] = $hangsangbao[0]->soluong;
+		}
+		// Hang tai che
+		$data['hangtaiche'] = 0;
+		$hangtaiche = $this->Giftcard->BC10_hanghoataiche($item_id, $start_date, $end_date);
+		if ($hangtaiche[0]->soluong) {
+			$data['hangtaiche'] = $hangtaiche[0]->soluong;
 		}
 		//echo "<pre>"; print_r($data); echo "</pre>"; exit;
 		$this->load->view("reports/chitiethanghoaxuatkho", $data);
