@@ -77,7 +77,7 @@
                 <td></td>
                 </tr>
                 <td colspan="2"> Tổng</td>
-                <td><?php echo $tongsoluong - $hangtralai -  $hangsangbao - $hangtaiche?> bao</td>
+                <td><?php echo $tongsoluong - $hangtralai -  $hangsangbao + $hangtaiche?> bao</td>
                 <td></td>
                 <td></td>
                 <td></td>

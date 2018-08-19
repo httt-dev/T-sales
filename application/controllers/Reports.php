@@ -784,10 +784,10 @@ class Reports extends Secure_Controller
 				if ($hangsangbaos[0]->soluong) {
 					$soluong = $soluong - $hangsangbaos[0]->soluong;
 				}
-				// Tru hang tai che
+				// Cong hang tai che
 				$hangtaiches = $this->Giftcard->BC10_hanghoataiche($item->id, $start_date, $end_date);
 				if ($hangtaiches[0]->soluong) {
-					$soluong = $soluong - $hangtaiches[0]->soluong;
+					$soluong = $soluong + $hangtaiches[0]->soluong;
 				}
 				$arrResult = $this->Item_kit->get_packet_price_by_time($item->id,date("Y/m/d"));
 				$input_prices = $arrResult['input_prices'];

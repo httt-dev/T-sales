@@ -260,6 +260,10 @@ class Config extends Secure_Controller
 			'type' => $type,
 			
 		);
+		// Luu log truoc khi cap nhat
+		if($sale_id > 0){
+			$this->Inventory->thuchiLog('edit','thuchi','sothu',$sale_id);
+		}
 		//echo "<pre>"; print_r($sales_data); echo "</pre>"; exit;
 		if($this->Appconfig->save_sothu($sales_data, $sale_id))
 		{
@@ -301,6 +305,10 @@ class Config extends Secure_Controller
 			'type' => $type,
 		);
 		//echo "<pre>"; print_r($receivings_data); echo "</pre>"; exit;
+		// Luu log truoc khi cap nhat
+		if($receiving_id > 0){
+			$this->Inventory->thuchiLog('edit','thuchi','sochi',$receiving_id);
+		}
 		if($this->Appconfig->save_sochi($receivings_data, $receiving_id))
 		{
 			echo json_encode(array('success' => TRUE, 'message' => 'Cập nhật thành công'));
@@ -316,9 +324,11 @@ class Config extends Secure_Controller
 			$type = $this->item_lib->get_type_thuchi();
 			if($type == 'sothu'){
 				// xoa dot cap nhat
+				$this->Inventory->thuchiLog('delete','thuchi','sothu',$sale_ids[0]);
 				$this->db->delete('sales_items', array('sale_id' => $sale_ids[0]));
 				$this->db->delete('sales', array('sale_id' => $sale_ids[0]));
 			}else{
+				$this->Inventory->thuchiLog('delete','thuchi','sochi',$sale_ids[0]);
 				$this->db->delete('receivings_items', array('receiving_id' => $sale_ids[0]));
 				$this->db->delete('receivings', array('receiving_id' => $sale_ids[0]));
 			}

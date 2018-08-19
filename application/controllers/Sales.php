@@ -447,6 +447,8 @@ class Sales extends Secure_Controller
 			$sale_id_old = $this->sale_lib->get_sale_id();
 			// neu la sua don hang thi xoa hang cu, them hang moi
 			if($sale_id_old > 0){
+				// Luu lich su Log
+				$this->Inventory->salesLog('edit','sale',$mode,$sale_id_old);
 				// neu la hang tai che thi tru di vao nha cung cap
 				if($mode=='taiche'){
 					$this->Receiving->delete($sale_id_old,false);
@@ -524,10 +526,6 @@ class Sales extends Secure_Controller
 					$this->load->view('sales/receipt', $dataRecive);
 				}
 				// In mau phieu ban hang
-			}
-			// Luu lich su Log
-			if($sale_id_old > 0){
-				$this->Inventory->salesLog('edit','sale',$mode,$sale_id);
 			}
 			$this->sale_lib->clear_all();
 		//}else{

@@ -24,6 +24,47 @@ class Inventory extends CI_Model
 		return $this->db->get()->result_array();
 	}
 
+	public function thuchiLog($action,$module,$type,$id){
+		if($action == 'edit'){
+			$content = ' Đã hiệu chỉnh';
+		}else{
+			$content = ' Đã xóa chỉnh';
+		}
+		if($type == 'sothu'){
+			$content .= ' sổ thu';
+		}
+		if($type == 'sochi'){
+			$content .= ' sổ chi';
+		}
+		if($type == 'sothu'){
+			$this->db->select("*");
+			$this->db->from('sales');
+			$this->db->join('people', 'sales.customer_id = people.person_id');
+			$this->db->where('sales.sale_id', $id);
+			$data = $this->db->get()->result_array();
+			if(isset($data[0])){
+				$content .= " ngày ". date("d-m-Y H:i:s", strtotime($data[0]['sale_time']) ) . " của khách hàng ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['pay_money']);
+			}
+		}else if($type == 'sochi'){
+			$this->db->select("*");
+			$this->db->from('receivings');
+			$this->db->join('people', 'receivings.employee_id = people.person_id');
+			$this->db->where('receivings.receiving_id', $id);
+			$data = $this->db->get()->result_array();
+			if(isset($data[0])){
+				$content .= " ngày ". date("d-m-Y H:i:s", strtotime($data[0]['receiving_time']) ) . " của nhà cung cấp ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['pay_money']);
+			}
+		}
+
+		$save_data = array(
+			'user_id' => $this->session->userdata('person_id'),
+			'action' => $action,
+			'content' => $content,
+			'date' => date('Y/m/d H:i:s'),
+		);
+		$success = $this->db->insert('logs', $save_data);
+	}
+
 	public function salesLog($action,$module,$type,$id){
 
 		$status = '';
@@ -56,7 +97,7 @@ class Inventory extends CI_Model
 			$this->db->where('sales.sale_id', $id);
 			$data = $this->db->get()->result_array();
 			if(isset($data[0])){
-				$content .= " ngày ". $data[0]['sale_time'] . " của khách hàng ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
+				$content .= " ngày ". date("d-m-Y H:i:s", strtotime($data[0]['sale_time']) )  . " của khách hàng ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
 			}
 		}else if($status == 'receving'){
 			$this->db->select("*");
@@ -65,7 +106,7 @@ class Inventory extends CI_Model
 			$this->db->where('receivings.receiving_id', $id);
 			$data = $this->db->get()->result_array();
 			if(isset($data[0])){
-				$content .= " ngày ". $data[0]['receiving_time'] . " của nhà cung cấp ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
+				$content .= " ngày ". date("d-m-Y H:i:s", strtotime($data[0]['receiving_time']) ) . " của nhà cung cấp ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
 			}
 		}
 
@@ -107,7 +148,7 @@ class Inventory extends CI_Model
 			$this->db->where('sales.sale_id', $id);
 			$data = $this->db->get()->result_array();
 			if(isset($data[0])){
-				$content .= " ngày ". $data[0]['sale_time'] . " của khách hàng ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
+				$content .= " ngày ". date("d-m-Y H:i:s", strtotime($data[0]['sale_time']) )  . " của khách hàng ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
 			}
 		}else if($status == 'receving'){
 			$this->db->select("*");
@@ -116,7 +157,7 @@ class Inventory extends CI_Model
 			$this->db->where('receivings.receiving_id', $id);
 			$data = $this->db->get()->result_array();
 			if(isset($data[0])){
-				$content .= " ngày ". $data[0]['receiving_time'] . " của nhà cung cấp ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
+				$content .= " ngày ". date("d-m-Y H:i:s", strtotime($data[0]['receiving_time']) ) . " của nhà cung cấp ". $data[0]['full_name'] . " (" . $data[0]['address'] . "), hóa đơn có giá trị: ". to_currency($data[0]['order_money']);
 			}
 		}
 		$save_data = array(
@@ -132,7 +173,7 @@ class Inventory extends CI_Model
 		$save_data = array(
 			'user_id' => $this->session->userdata('person_id'),
 			'action' => 'login',
-			'content' => 'Đã đăng nhập vào '.date('Y/m/d H:i:s'),
+			'content' => 'Đã đăng nhập vào '.date('d-m-Y H:i:s'),
 			'date' => date('Y/m/d H:i:s'),
 		);
 		$success = $this->db->insert('logs', $save_data);
