@@ -1086,6 +1086,14 @@ class Sales extends Secure_Controller
 			foreach($arrcarts as $arrcart){
 				$this->sale_lib->add_item($arrcart['item_id'], (int)$arrcart['quantity_return'],(int)$arrcart['quantity_give'], (int)$arrcart['sale_price']);
 			}
+		}else if($sale_info['type'] == 3){
+			$this->sale_lib->set_tranfer($sale_info['car_money']);
+			$this->sale_lib->set_mode('huy');
+			$arrcarts = $this->Sale->get_info_itemp_sales($sale_id);
+			foreach($arrcarts as $arrcart){
+				$quantity = (int)$arrcart['quantity'];
+				$this->sale_lib->add_item($arrcart['item_id'],$quantity, (int)$arrcart['quantity_return'],(int)$arrcart['quantity_give'], (int)$arrcart['sale_price']);
+			}
 		}
 		// nha cung cap
 		$customer_id = $sale_info['customer_id'];

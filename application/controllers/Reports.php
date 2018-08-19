@@ -453,7 +453,7 @@ class Reports extends Secure_Controller
 	 * ------------------ BC 06: SO QUY TIEN MAT ----------------------------------
 	 * ----------------------------------------------------------------
 	 **/
-	private function BC06_soquytienmat($payment_type, $khachhang_type , $start_date, $end_date)
+	private function BC06_soquytienmat($payment_type, $khachhang_type = '' , $start_date, $end_date)
 	{
 		$CI = &get_instance();
 		$controller_name = $CI->uri->segment(1);

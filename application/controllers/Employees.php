@@ -86,19 +86,15 @@ class Employees extends Persons
 			// Neu la dang nhap
 			if($data_row['action'] == 'login'){
 				$data_rows[$i]['action'] = 'Đăng nhập';
-				$content = ' Đã đăng nhập';
 			}
 			// Neu la hieu chinh
 			if($data_row['action'] == 'edit'){
 				$data_rows[$i]['action'] = 'Sửa';
-				$content = $this->Inventory->getInforEditSale($data_row['order_id'],$data_row['type']);
 			}
 			// Neu la xoa
 			if($data_row['action'] == 'delete'){
 				$data_rows[$i]['action'] = 'Xóa';
-				$content = $data_row['type'];
 			}
-			$data_rows[$i]['content'] = $content;
 			$i++;
 		}
 		echo json_encode(array('rows' => $data_rows));

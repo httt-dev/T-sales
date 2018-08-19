@@ -24,7 +24,7 @@
 		<select name="persion_type" id="persion_type" class="form-control input-sm">
 			<option value="">-- Chọn hành động --</option>
 			<option value="login">Đăng nhập</option>
-			<option value="modify">Sửa</option>
+			<option value="edit"">Sửa</option>
 			<option value="delete">Xóa</option>
 		</select>
 	</div>
