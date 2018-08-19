@@ -77,9 +77,8 @@ class Employees extends Persons
 		$statDate = $this->input->get('start_date');
 		$fromdate = $this->input->get('end_date');
 
-		$data_rows = $this->Inventory->searchLogs(
-			$search,$limit,$offset,$people,$type,$statDate,$fromdate
-		);
+		$data_rows = $this->Inventory->searchLogs($search,$limit,$offset,$people,$type,$statDate,$fromdate)->result_array();
+		$total_rows = $this->Inventory->get_found_rows($search,$limit,$offset,$people,$type,$statDate,$fromdate);
 		$i = 0;
 		foreach($data_rows as $data_row){
 			$content = '';
@@ -97,7 +96,7 @@ class Employees extends Persons
 			}
 			$i++;
 		}
-		echo json_encode(array('rows' => $data_rows));
+		echo json_encode(array('total' => $total_rows,'rows' => $data_rows));
 	}
 	
 	/*

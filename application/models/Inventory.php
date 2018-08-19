@@ -73,7 +73,7 @@ class Inventory extends CI_Model
 			'user_id' => $this->session->userdata('person_id'),
 			'action' => $action,
 			'content' => $content,
-			'date' => date('Y/m/d h:i:s'),
+			'date' => date('Y/m/d H:i:s'),
 		);
 		$success = $this->db->insert('logs', $save_data);
 	}
@@ -123,7 +123,7 @@ class Inventory extends CI_Model
 			'user_id' => $this->session->userdata('person_id'),
 			'action' => $action,
 			'content' => $content,
-			'date' => date('Y/m/d h:i:s'),
+			'date' => date('Y/m/d H:i:s'),
 		);
 		$success = $this->db->insert('logs', $save_data);
 	}
@@ -132,13 +132,13 @@ class Inventory extends CI_Model
 		$save_data = array(
 			'user_id' => $this->session->userdata('person_id'),
 			'action' => 'login',
-			'content' => 'Đã đăng nhập vào '.date('Y/m/d h:i:s'),
-			'date' => date('Y/m/d h:i:s'),
+			'content' => 'Đã đăng nhập vào '.date('Y/m/d H:i:s'),
+			'date' => date('Y/m/d H:i:s'),
 		);
 		$success = $this->db->insert('logs', $save_data);
 	}
 
-	public function searchLogs($search,$limit,$offset,$people,$type,$statDate,$fromdate){
+	public function searchLogs($search, $rows = 0,$limit_from = 0,$people,$type,$statDate,$fromdate){
 		$this->db->select("action,content,date,people.full_name as name_people");
 		$this->db->from('logs');
 		$this->db->join('employees', 'employees.person_id = logs.user_id');
@@ -158,14 +158,18 @@ class Inventory extends CI_Model
 		{
 			$this->db->like('logs.action', $type);
 		}
-
-
-		if($offset > 0) 
-		{	
-			$this->db->limit($offset, $limit);
-		}
 		$this->db->order_by('date', 'desc');
-		return $this->db->get()->result_array();
+		if($rows > 0) 
+		{	
+			$this->db->limit($rows, $limit_from);
+		}
+		
+		return $this->db->get();
+	}
+
+	public function get_found_rows($search, $rows = 0,$limit_from = 0,$people,$type,$statDate,$fromdate)
+	{
+		return $this->searchLogs($search, $rows = 0,$limit_from = 0,$people,$type,$statDate,$fromdate)->num_rows();
 	}
 }
 ?>
