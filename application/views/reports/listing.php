@@ -67,4 +67,64 @@ if(isset($error))
 	</div>
 </div>
 
+<div class="row">
+	<div id="wrap-btn-backup" class="col-md-6">
+		<button type="button" class="btn btn-success" id="load" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing Order">Sao lưu</button>
+		<span>(Hệ thống sẽ tự động gửi dữ liệu vào mail cá nhân)</span>
+	</div>
+	<div style="display: none" id="loader">
+		<div class="loader"></div>
+		<span>Hệ thống đang backup và gửi Email...</span>
+	</div>
+	
+</div>
+<style>
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 <?php $this->load->view("partial/footer"); ?>
+
+<script>
+$(document).ready(function()
+{
+	$('#load').on('click', function() {
+		var r = confirm("Bạn có chắc chắn muốn backup và gửi email!");
+		if (r == true) {
+		    //$("#wrap-btn-backup").hide();
+			//$("#loader").show();
+			$.ajax({
+		        url : '<?php echo site_url('mailbackup/index.php');?>',
+		        type : "post",
+		        dataType:"json",
+		        data : {
+		        	token: 'yRQYnWzskCZUxPwaQupWkiUzKELZ49eM7oWxAQK_ZXw',
+		        	name: '<?php echo $full_name;?>'
+		        },
+		        success : function (arrResult){
+		        	$("#wrap-btn-backup").show();
+					$("#loader").hide();
+					alert(arrResult['message']);
+		        }
+		    });
+		}
+	});
+});
+</script>

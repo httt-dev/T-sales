@@ -31,6 +31,9 @@ class Reports extends Secure_Controller
 	//Initial report listing screen
 	public function index()
 	{
+		$this->load->model('Employee');
+		$model = $this->Employee;
+		$users = $model->get_logged_in_employee_info();
 		$data['grants'] = $this->xss_clean($this->Employee->get_employee_grants($this->session->userdata('person_id')));
 		$checkadmin = false;
 		foreach($data['grants'] as $grant){
@@ -39,6 +42,7 @@ class Reports extends Secure_Controller
 			}
 		}
 		$data['checkadmin'] =$checkadmin;
+		$data['full_name'] =$users->full_name;
 		$this->load->view('reports/listing', $data);
 
 	}
@@ -853,6 +857,29 @@ class Reports extends Secure_Controller
 		}
 		//echo "<pre>"; print_r($data); echo "</pre>"; exit;
 		$this->load->view("reports/chitiethanghoaxuatkho", $data);
+	}
+
+	public function backupdatabase(){
+		$file_sql = false;
+		$this->load->library('backup');
+		//$file_sql = $this->backup->backupTables();
+		//$tomail = $this->config->item('to_mail');
+		if(!$file_sql){
+			echo json_encode(array("success" => false,'message' => 'Backup bị lỗi'));
+		}
+		// lay ten database:
+		//$filePath = FCPATH.'public\database\backup\\'.$file_sql;
+		$filePath = 'D:\WWW\HAIDUONG\T-sales\public\database\backup\db_tsale.rar';
+		// cấu hình thư mục config
+	    
+	    $this->load->library("phpmailer");
+	     $objMail = $this->phpmailer->sendmail();
+	     print_r($objMail); die;
+
+	    if(!$result){
+	    	echo json_encode(array("success" => false,'message' => 'Gửi Email bị lỗi'));
+	    }  
+	    echo json_encode(array("success" => true,'message' => 'Backup dữ liệu và gửi Email thành công'));
 	}
 }
 ?>
