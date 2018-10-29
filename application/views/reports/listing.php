@@ -108,8 +108,8 @@ $(document).ready(function()
 	$('#load').on('click', function() {
 		var r = confirm("Bạn có chắc chắn muốn backup và gửi email!");
 		if (r == true) {
-		    //$("#wrap-btn-backup").hide();
-			//$("#loader").show();
+		    $("#wrap-btn-backup").hide();
+			$("#loader").show();
 			$.ajax({
 		        url : '<?php echo site_url('mailbackup/index.php');?>',
 		        type : "post",

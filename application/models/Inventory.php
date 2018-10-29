@@ -180,7 +180,7 @@ class Inventory extends CI_Model
 	}
 
 	public function searchLogs($search, $rows = 0,$limit_from = 0,$people,$type,$statDate,$fromdate){
-		$this->db->select("action,content,date,people.full_name as name_people");
+		$this->db->select("logs.id,action,content,date,people.full_name as name_people");
 		$this->db->from('logs');
 		$this->db->join('employees', 'employees.person_id = logs.user_id');
 		$this->db->join('people', 'employees.person_id = people.person_id');
@@ -206,6 +206,17 @@ class Inventory extends CI_Model
 		}
 		
 		return $this->db->get();
+	}
+
+	public function delete_logs($ids){
+
+		foreach($ids as $id){
+			$this->db->trans_start();
+			$this->db->delete('logs', array('id' => $id));
+			$this->db->trans_complete();
+		}
+		return true;
+		
 	}
 
 	public function get_found_rows($search, $rows = 0,$limit_from = 0,$people,$type,$statDate,$fromdate)
