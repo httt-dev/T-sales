@@ -11,7 +11,7 @@ $(document).ready(function()
 	table_support.init({
 		resource: 'Item_kits',
 		headers: <?php echo $table_headers; ?>,
-		pageSize: <?php echo $this->config->item('lines_per_page'); ?>,
+		pageSize: 90000,
 		uniqueId: 'id',
 		queryParams: function() {
             return $.extend(arguments[0], {

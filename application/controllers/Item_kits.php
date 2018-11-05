@@ -56,6 +56,8 @@ class Item_kits extends Secure_Controller
 		$start_date = DateTime::createFromFormat('d/m/Y',$start_date)->format('Y-m-d H:i:s');
 		//var_dump($item_kits); exit;
 		$data_rows = array();
+		$totalmoney = 0;
+		$j=0;
 		foreach($item_kits->result() as $item_kit)
 		{
 			//print_r($item_kit); exit;
@@ -63,11 +65,16 @@ class Item_kits extends Secure_Controller
 			//$item_kit = $this->_add_totals_to_item_kit($item_kit);
 			$item_kit->input_prices = $arrResult['input_prices'];
 			$item_kit->tondauky = $this->Item->baobitonkhodauky($item_kit->id,$start_date);
+			$tong = $item_kit->input_prices * $item_kit->tondauky;
+			$totalmoney = $totalmoney + $tong;
 			$data_rows[] = $this->xss_clean(get_item_kit_data_row($item_kit, $this));
+			$j++;
 		}
-
 		$data_rows = $this->xss_clean($data_rows);
-
+		$data_rows[$j]['name'] = '<b>Tổng</b>';
+		$data_rows[$j]['gia_tri'] = '<b>'.to_currency($totalmoney).'</b>';
+		$data_rows[$j]['item_number'] = '';
+		$data_rows[$j]['name_item'] = '';
 		echo json_encode(array('total' => $total_rows, 'rows' => $data_rows));
 	}
 
