@@ -86,6 +86,7 @@ $(document).ready(function()
 		<option value="">-- Chọn đối tượng --</option>
 		<option value="khach_hang">Khách hàng</option>
 		<option value="nha_cung_cap">Nhà cung cấp</option>
+		<option value="ca_nhan">Cá nhân</option>
 		<option value="khac">Khác</option>
 		</select>
 		</span>

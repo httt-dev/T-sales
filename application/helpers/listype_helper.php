@@ -25,6 +25,7 @@ function loai_khach_hang()
 	$arrTypeItem = array(
 		'khach_hang' => 'Khách hàng',
 		'nha_cung_cap' => 'Nhà cung cấp',
+		'ca_nhan' => 'Cá nhân',
 		'khac' => 'Khác'
 	);
 	return $arrTypeItem;

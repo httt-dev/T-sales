@@ -98,6 +98,8 @@ class Config extends Secure_Controller
 					$item_kit['full_name'] = $users->agency_name."-".$users->full_name;
 				}else if($item_kit['type'] == 6){
 					$item_kit['full_name'] = 'Khác';
+				}else if($item_kit['type'] == 8){
+					$item_kit['full_name'] = 'Cá nhân';
 				}else{
 					$users = $this->Customer->get_info($item_kit['customer_id']);
 					$item_kit['full_name'] = $users->full_name;
@@ -110,6 +112,8 @@ class Config extends Secure_Controller
 					$item_kit['full_name'] = $users->full_name;
 				}else if($item_kit['type'] == 6){
 					$item_kit['full_name'] = 'Khác';
+				}else if($item_kit['type'] == 8){
+					$item_kit['full_name'] = 'Cá nhân';
 				}else{
 					// lay nha cung cap
 					$users = $this->Supplier->get_info($item_kit['supplier_id']);
@@ -165,6 +169,10 @@ class Config extends Secure_Controller
 				$item_kit['full_name'] = 'Khác';
 				$info[0]['object'] = 'khac';
 				$info[0]['full_name'] = '';
+			}else if($info[0]['type'] == 8){
+				$item_kit['full_name'] = 'Cá nhân';
+				$info[0]['object'] = 'ca_nhan';
+				$info[0]['full_name'] = '';
 			}else{
 				$users = $this->Customer->get_info($info[0]['customer_id']);
 				$info[0]['full_name'] = $users->full_name;
@@ -202,6 +210,10 @@ class Config extends Secure_Controller
 				$item_kit['full_name'] = 'Khác';
 				$info[0]['object'] = 'khac';
 				$info[0]['full_name'] = '';
+			}else if($info[0]['type'] == 8){
+				$item_kit['full_name'] = 'Cá nhân';
+				$info[0]['object'] = 'ca_nhan';
+				$info[0]['full_name'] = '';
 			}else{
 				$users = $this->Supplier->get_info($info[0]['supplier_id']);
 				$info[0]['full_name'] = $users->agency_name."-".$users->full_name;
@@ -232,6 +244,10 @@ class Config extends Secure_Controller
 			$supplier_id = $this->input->post('selectsupplier');
 			$customer_id =0;
 			$type =5;
+		}else if($object == 'ca_nhan'){
+			$supplier_id = 0;
+			$customer_id =0;
+			$type =8;
 		}else{
 			$customer_id =0;
 			$supplier_id = 0;
@@ -281,6 +297,10 @@ class Config extends Secure_Controller
 			$customer_id = $this->input->post('selectcustomer');
 			$supplier_id =0;
 			$type =5;
+		}else if($object == 'ca_nhan'){
+			$supplier_id = 0;
+			$customer_id =0;
+			$type =8;
 		}else{
 			$customer_id =0;
 			$supplier_id = 0;
