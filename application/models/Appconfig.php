@@ -101,6 +101,8 @@ class Appconfig extends CI_Model
 			$this->db->join('people', 'sales.supplier_id = people.person_id');
 		}else if($persion_type == 'khac'){
 			$this->db->where('type', 6);
+		}else if($persion_type == 'ca_nhan'){
+			$this->db->where('type', 8);
 		}
 		//$this->db->join('people', 'sales.customer_id = people.person_id', 'right');
 		//$this->db->join('people', 'sales.supplier_id = people.person_id', 'left');
@@ -138,6 +140,8 @@ class Appconfig extends CI_Model
 			$this->db->join('people', 'sales.supplier_id = people.person_id');
 		}else if($persion_type == 'khac'){
 			$this->db->where('type', 6);
+		}else if($persion_type == 'ca_nhan'){
+			$this->db->where('type', 8);
 		}
 		//$this->db->join('people', 'sales.customer_id = people.person_id', 'right');
 		//$this->db->join('people', 'sales.supplier_id = people.person_id', 'left');
@@ -162,6 +166,8 @@ class Appconfig extends CI_Model
 			$this->db->join('people', 'receivings.supplier_id = people.person_id');
 		}else if($persion_type == 'khac'){
 			$this->db->where('type', 6);
+		}else if($persion_type == 'ca_nhan'){
+			$this->db->where('type', 8);
 		}
 		$this->db->where('pay_money <>', 0);
 		// order by name of item
@@ -229,6 +235,8 @@ class Appconfig extends CI_Model
 			$this->db->join('people', 'receivings.supplier_id = people.person_id');
 		}else if($persion_type == 'khac'){
 			$this->db->where('type', 6);
+		}else if($persion_type == 'ca_nhan'){
+			$this->db->where('type', 8);
 		}
 		$this->db->where('pay_money <>', 0);
 		// order by name of item

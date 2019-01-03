@@ -301,4 +301,25 @@ function soquytienmat_table_headers()
 		
 		return transform_headers(array_merge($headers));
 	}
+
+
+function hanghoanotra_table_headers()
+{
+	$CI =& get_instance();
+
+	$headers = array(
+		array('ma_hang_hoa' => "Mã hàng hóa"),
+		array('ten_hang_hoa' => "Tên hàng hóa"),
+		array('no_dau_ky' => "Nợ đầu kỳ"),
+		//array('so_chi_kytruoc' => "Số tiền chi kỳ trước"),
+		array('tra_trong_ky' => "Trả trong kỳ"),
+		array('no_trong_ky' => "Nợ trong kỳ"),
+		array('ton_cuoi_ky' => "Tồn cuối kỳ")
+	);
+	
+	return transform_headers(array_merge($headers));
+}
+
+
+	
 ?>

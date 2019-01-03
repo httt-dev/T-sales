@@ -129,6 +129,7 @@ class Reports extends Secure_Controller
 				'' => '-- Tất cả --',
 				'khach_hang' => 'Khách hàng',
 				'nha_cung_cap' => 'Nhà cung cấp',
+				'ca_nhan' => 'Cá nhân',
 				'khac' => 'Khác'
 			);
 			$this->load->view('reports/soquytienmat', $data);
@@ -152,13 +153,15 @@ class Reports extends Secure_Controller
 		elseif ($type == 'hanghoatonkho') {
 			$data['table_headers'] = hanghoatonkho_table_headers();
 			$this->load->view('reports/hanghoatonkho', $data);
-		}
-		elseif ($type == 'thekho') {
+		}elseif ($type == 'thekho') {
 			$data['table_headers'] = hanghoanhapkho_table_headers();
 			$this->load->view('reports/thekho', $data);
 		}elseif($type == 'hoanghoaxuatkhobaobi'){
 			$data['table_headers'] = hanghoaxuatkhobaobi_table_headers();
 			$this->load->view('reports/hanghoaxuatkhobaobi', $data);
+		}elseif($type == 'hanghoanotra'){
+			$data['table_headers'] = hanghoanotra_table_headers();
+			$this->load->view('reports/hanghoanotra', $data);
 		}
 	}
 
@@ -231,6 +234,9 @@ class Reports extends Secure_Controller
 		// BC10
 		elseif ($type == 'thekho') {
 			$this->thekho($customer_id, $search, $start_date, $end_date);
+		}elseif ($type == 'hangnotra') {
+			$customer_id = $this->input->get('customer_id');
+			$this->BC11_hanghoanotra($customer_id, $search, $start_date,$end_date);
 		}elseif($type == 'hanghoaxuatkhobaobi'){
 			$this->BC10_hanghoaxuatkhobaobi($search, $start_date, $end_date);
 		}
@@ -881,5 +887,99 @@ class Reports extends Secure_Controller
 	    }  
 	    echo json_encode(array("success" => true,'message' => 'Backup dữ liệu và gửi Email thành công'));
 	}
+
+	/** ----------------------------------------------------------------
+	 * ------------------ BC 11: HANG HOA NO TRA ----------------------------------
+	 * ----------------------------------------------------------------
+	 **/
+
+	private function BC11_hanghoanotra($item_id, $search, $start_date,$end_date)
+	{
+		// lay tat cac san pham
+		$arrItems = $this->Giftcard->BC11_search_tonkho($item_id)->result_array();
+		$start_date = str_replace('/', '-', $start_date);
+		$start_date = date("Y-m-d", strtotime($start_date));
+		$end_date = str_replace('/', '-', $end_date);
+		$end_date = date("Y-m-d", strtotime($end_date));
+		$result = array();
+		$i = 0;
+		$CI = &get_instance();
+		$controller_name = $CI->uri->segment(1);
+		foreach ($arrItems as $arrItem) {
+			// hang hoa ton kho trong ky
+			$arrDauky = $this->Giftcard->BC11_hanghoanotra('kytruoc',$arrItem['id'], $start_date,$end_date);
+			//print_r($arrDauky); die;
+			$arrTrongky = $this->Giftcard->BC11_hanghoanotra('trongky',$arrItem['id'], $start_date,$end_date);
+			$name = $arrItem['name'];
+			$id = $arrItem['id'];
+			if($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'] !== 0){
+				$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
+				$result[$i]['ten_hang_hoa'] = $name;
+				$result[$i]['no_dau_ky'] = $arrDauky['sono'];
+				$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
+				$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
+				$result[$i]['ton_cuoi_ky'] = $arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'];
+				$result[$i]['edit'] = anchor(
+					$controller_name . "/BC11_chitiethanghoanotra/$id/$start_date/$end_date",
+					'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
+					array('class' => 'modal-dlg', 'title' => "Xem chi tiết")
+				);
+				$i++;
+			}
+		}		
+		// tinh ton dau ky
+		$total_rows = count($result);
+		//print_r($data_rows); exit;
+		echo json_encode(array('total' => $total_rows, 'rows' => $result));
+	}
+
+	public function BC11_chitiethanghoanotra($item_id = -1, $start_date, $end_date)
+	{
+		$customers = $this->Customer->get_all_customer(-1);
+		//echo "<pre>"; print_r($customers); exit;
+		$total_rows = 0;
+		$payment_summary = '';
+		$data_rows = array();
+		$CI =& get_instance();
+		$result = array();
+		$controller_name = $CI->uri->segment(1);
+		$i = 0;
+		$tongdauky = $tongtrongky = 0;
+		foreach ($customers as $customer)
+		{
+			if($customer){
+				// tinh no ky truoc
+				$arrDauky = $this->Giftcard->BC11_hanghoanotrakhachhang("kytruoc",$customer->person_id, $item_id, $start_date, $end_date);
+				$arrTrongky = $this->Giftcard->BC11_hanghoanotrakhachhang("trongky",$customer->person_id, $item_id, $start_date, $end_date);
+				if(is_numeric($arrDauky['sono']) || is_numeric($arrTrongky['quantity_loan_return']) || is_numeric($arrTrongky['quantity_loan'])){
+					if($arrDauky['sono'] !=0 || $arrTrongky['quantity_loan_return'] !=0 || $arrTrongky['quantity_loan'] !=0){
+						$result[$i]['ma_hang_hoa'] = $customer->code;
+						$result[$i]['ten_hang_hoa'] = $arrDauky['name'];
+						$result[$i]['no_dau_ky'] = $arrDauky['sono'];
+						$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
+						$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
+						$result[$i]['ton_cuoi_ky'] = $arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'];
+						$result[$i]['edit'] = anchor(
+							$controller_name . "/BC11_chitietnotrakhachhang/$customer->person_id/$item_id/$start_date/$end_date",
+							'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
+							array('class' => 'modal-dlg', 'title' => "Xem chi tiết",'target' => '_blank')
+						);
+						$i++;
+					}
+				}
+			}
+		}
+		//echo "<pre>";print_r($result); die;
+		$data['datas'] = $result;
+		$this->load->view("reports/chitiethangnotra", $data);
+	}
+
+	public function BC11_chitietnotrakhachhang($customer_id,$item_id = -1, $start_date, $end_date)
+	{
+		$datas = $this->Giftcard->BC11_chitietnotrakhachhang($customer_id,$item_id = -1, $start_date, $end_date);
+		print_r($datas); die;
+	}
+
+	
 }
 ?>

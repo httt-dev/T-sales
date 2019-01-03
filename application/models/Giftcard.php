@@ -656,6 +656,8 @@ class Giftcard extends CI_Model
 					$this->db->where('type', 5);
 				}else if($khachhang_type == 'khac'){
 					$this->db->where('type', 6);
+				}else if($khachhang_type == 'ca_nhan'){
+					$this->db->where('type', 8);
 				}else{
 					$this->db->where('type <>', 5);
 					$this->db->where('type <>', 6);
@@ -697,6 +699,8 @@ class Giftcard extends CI_Model
 				$this->db->where('type', 5);
 			}else if($khachhang_type == 'khac'){
 				$this->db->where('type', 6);
+			}else if($khachhang_type == 'ca_nhan'){
+				$this->db->where('type', 8);
 			}else{
 				$this->db->where('type <>', 5);
 				$this->db->where('type <>', 6);
@@ -1235,5 +1239,100 @@ class Giftcard extends CI_Model
 		$this->db->where('DATE(sale_time) BETWEEN ' .$this->db->escape($start_date). ' AND ' . $this->db->escape($end_date));
 		return $this->db->get()->result_array();
 	}
+
+	/** ----------------------------------------------------------------
+	 * ------------------ BAO CAO 11 ----------------------------------
+	**/
+
+	// hang hoa nhap kho: so luong hang nhap - so luong hang huy - so luong hang tai che
+	public function BC11_search_tonkho($items)
+	{
+		$this->db->select('items.*,items_packet.item_number as ma_bao_bi,suppliers.agency_name,item_quantities.quantity,item_quantities.quantity_return');
+		$this->db->from('items');
+		$this->db->join('suppliers', 'suppliers.person_id = items.supplier_id', 'left');
+		$this->db->join('item_quantities', 'item_quantities.item_id = items.id', 'left');
+		$this->db->join('items_packet', 'items_packet.id = items.packet_id', 'left');
+		//$this->db->where('items.status', $filters['is_status']);
+		if($items && $items !== '')
+		{
+			$this->db->where('items.id', $items);
+		}
+		//echo $this->db->last_query();
+		return $this->db->get();
+	}
+
+	public function BC11_hanghoanotra($type,$item_id,$start_date,$end_date)
+	{
+		$return['sono'] = 0;
+		$return['quantity_loan_return'] = 0;
+		$return['quantity_loan'] = 0;
+		// tong gia tri xuat kho
+		$this->db->select('SUM((quantity_loan_return - quantity_loan)) as sono, quantity_loan, quantity_loan_return ');
+		$this->db->from('t_sales_items');
+		$this->db->join('t_sales', 't_sales.sale_id = t_sales_items.sale_id');
+		$this->db->join('t_items', 't_items.id = t_sales_items.item_id');
+		$this->db->where('t_sales.type', 1);
+		$this->db->where('t_sales_items.item_id', $item_id);
+		if($type == "kytruoc"){
+			$this->db->where('sale_time <',$start_date);
+		}else{
+			$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		}
+		$arrReturn = $this->db->get()->result_array();
+		if(isset($arrReturn[0])){
+			$return = $arrReturn[0];
+		}
+		return $return;
+	}
+
+	public function BC11_hanghoanotrakhachhang($type,$customer_id,$item_id,$start_date,$end_date)
+	{
+		$return['sono'] = 0;
+		$return['quantity_loan_return'] = 0;
+		$return['quantity_loan'] = 0;
+		$return['name'] = '';
+		// tong gia tri xuat kho
+		$this->db->select('SUM((quantity_loan_return - quantity_loan)) as sono, quantity_loan, quantity_loan_return, t_people.full_name as name ');
+		$this->db->from('t_sales_items');
+		$this->db->join('t_sales', 't_sales.sale_id = t_sales_items.sale_id');
+		$this->db->join('t_items', 't_items.id = t_sales_items.item_id');
+		$this->db->join('t_people', 't_people.person_id = t_sales.customer_id');
+		$this->db->join('t_customers', 't_customers.person_id = t_sales.customer_id');
+		$this->db->where('t_people.person_id', $customer_id);
+		$this->db->where('t_sales.type', 1);
+		$this->db->where('t_sales_items.item_id', $item_id);
+		if($type == "kytruoc"){
+			$this->db->where('sale_time <',$start_date);
+		}else{
+			$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		}
+		$arrReturn = $this->db->get()->result_array();
+		if(isset($arrReturn[0])){
+			$return = $arrReturn[0];
+		}
+		return $return;
+	}
+
+	public function BC11_chitietnotrakhachhang($customer_id,$item_id = -1, $start_date, $end_date)
+	{
+		// tong gia tri xuat kho
+		$this->db->select('*');
+		$this->db->from('t_sales');
+		$this->db->join('t_sales_items', 't_sales.sale_id = t_sales_items.sale_id');
+		$this->db->join('t_items', 't_items.id = t_sales_items.item_id');
+		$this->db->join('t_people', 't_people.person_id = t_sales.customer_id');
+		$this->db->join('t_customers', 't_customers.person_id = t_sales.customer_id');
+		$this->db->where('t_people.person_id', $customer_id);
+		$this->db->where('t_sales.type', 1);
+		$this->db->where('t_sales_items.item_id', $item_id);
+		//$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
+		$arrReturn = $this->db->get()->result_array();
+		return $arrReturn;
+	}
+
+
+	
+
+
 }
 ?>
