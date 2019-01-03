@@ -23,7 +23,7 @@
                          <td><?php echo $data['tra_trong_ky']; ?></td>
                          <td><?php echo $data['no_trong_ky']; ?></td>
                          <td><?php echo $data['ton_cuoi_ky']; ?></td>
-                         <!-- <td><?php echo $data['edit']; ?></td> -->
+                         <td><?php echo $data['edit']; ?></td>
                          </tr>
                  <?php       
                     }

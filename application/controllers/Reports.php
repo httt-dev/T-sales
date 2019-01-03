@@ -970,14 +970,16 @@ class Reports extends Secure_Controller
 			}
 		}
 		//echo "<pre>";print_r($result); die;
+		
 		$data['datas'] = $result;
 		$this->load->view("reports/chitiethangnotra", $data);
 	}
 
 	public function BC11_chitietnotrakhachhang($customer_id,$item_id = -1, $start_date, $end_date)
 	{
-		$datas = $this->Giftcard->BC11_chitietnotrakhachhang($customer_id,$item_id = -1, $start_date, $end_date);
-		print_r($datas); die;
+		$datas = $this->Giftcard->BC11_chitietnotrakhachhang($customer_id,$item_id, $start_date, $end_date);
+		$data['datas'] = $datas;
+		$this->load->view("reports/chitietnotrakhachhang", $data);
 	}
 
 	
