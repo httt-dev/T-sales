@@ -9,7 +9,7 @@
                         <th>Trả trong kỳ</th>
                         <th>Nợ trong kỳ</th>
                         <th>Tồn cuối kỳ</th>
-                        <!-- <th>Xem chi tiết</th> -->
+                        <th>Xem chi tiết</th>
                     </tr>
                 </thead>
                 <tbody>

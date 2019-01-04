@@ -1325,6 +1325,11 @@ class Giftcard extends CI_Model
 		$this->db->where('t_people.person_id', $customer_id);
 		$this->db->where('t_sales.type', 1);
 		$this->db->where('t_sales_items.item_id', $item_id);
+		$this->db->group_start();
+		$this->db->where('t_sales_items.quantity_loan <>', 0);
+		$this->db->or_where('t_sales_items.quantity_loan_return <>', 0);
+		$this->db->group_end();
+		$this->db->order_by('sale_time', 'desc');
 		//$this->db->where('DATE(sale_time) BETWEEN ' . $this->db->escape($start_date) . ' AND ' . $this->db->escape($end_date));
 		$arrReturn = $this->db->get()->result_array();
 		return $arrReturn;

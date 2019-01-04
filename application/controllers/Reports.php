@@ -960,9 +960,9 @@ class Reports extends Secure_Controller
 						$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
 						$result[$i]['ton_cuoi_ky'] = $arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'];
 						$result[$i]['edit'] = anchor(
-							$controller_name . "/BC11_chitietnotrakhachhang/$customer->person_id/$item_id/$start_date/$end_date",
+							"reports/chitietnotrakhachhang/$customer->person_id/$item_id/$start_date/$end_date",
 							'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
-							array('class' => 'modal-dlg', 'title' => "Xem chi tiết",'target' => '_blank')
+							array('target' => '_blank')
 						);
 						$i++;
 					}
@@ -975,7 +975,7 @@ class Reports extends Secure_Controller
 		$this->load->view("reports/chitiethangnotra", $data);
 	}
 
-	public function BC11_chitietnotrakhachhang($customer_id,$item_id = -1, $start_date, $end_date)
+	public function chitietnotrakhachhang($customer_id,$item_id = -1, $start_date, $end_date)
 	{
 		$datas = $this->Giftcard->BC11_chitietnotrakhachhang($customer_id,$item_id, $start_date, $end_date);
 		$data['datas'] = $datas;
