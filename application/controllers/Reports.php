@@ -918,7 +918,7 @@ class Reports extends Secure_Controller
 				$result[$i]['no_dau_ky'] = $arrDauky['sono'];
 				$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
 				$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
-				$result[$i]['ton_cuoi_ky'] = $arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'];
+				$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']);
 				$result[$i]['edit'] = anchor(
 					$controller_name . "/BC11_chitiethanghoanotra/$id/$start_date/$end_date",
 					'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
@@ -958,7 +958,7 @@ class Reports extends Secure_Controller
 						$result[$i]['no_dau_ky'] = $arrDauky['sono'];
 						$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
 						$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
-						$result[$i]['ton_cuoi_ky'] = $arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'];
+						$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']);
 						$result[$i]['edit'] = anchor(
 							"reports/chitietnotrakhachhang/$customer->person_id/$item_id/$start_date/$end_date",
 							'<span class="glyphicon glyphicon-info-sign icon-th"></span>',

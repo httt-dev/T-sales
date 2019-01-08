@@ -1273,6 +1273,10 @@ class Giftcard extends CI_Model
 		$this->db->join('t_items', 't_items.id = t_sales_items.item_id');
 		$this->db->where('t_sales.type', 1);
 		$this->db->where('t_sales_items.item_id', $item_id);
+		$this->db->group_start();
+		$this->db->where('t_sales_items.quantity_loan <>', 0);
+		$this->db->or_where('t_sales_items.quantity_loan_return <>', 0);
+		$this->db->group_end();
 		if($type == "kytruoc"){
 			$this->db->where('sale_time <',$start_date);
 		}else{
@@ -1301,6 +1305,10 @@ class Giftcard extends CI_Model
 		$this->db->where('t_people.person_id', $customer_id);
 		$this->db->where('t_sales.type', 1);
 		$this->db->where('t_sales_items.item_id', $item_id);
+		$this->db->group_start();
+		$this->db->where('t_sales_items.quantity_loan <>', 0);
+		$this->db->or_where('t_sales_items.quantity_loan_return <>', 0);
+		$this->db->group_end();
 		if($type == "kytruoc"){
 			$this->db->where('sale_time <',$start_date);
 		}else{

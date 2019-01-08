@@ -34,10 +34,10 @@
                         }
                     ?>
                     <tr>
-                       <td colspan="2">Tổng</td>
-                       <td><?php echo $tonggui?></td>
-                       <td><?php echo $tongtra?></td>
-                       <td>Nợ: <?php echo $tongtra - $tonggui?></td>
+                       <td colspan="2" style="font-weight: bold">Tổng số</td>
+                       <td style="font-weight: bold"><?php echo $tonggui?></td>
+                       <td style="font-weight: bold"><?php echo $tongtra?></td>
+                       <td style="font-weight: bold">Nợ: <?php echo - ($tongtra - $tonggui)?></td>
                     </tr>
                 </tbody>
             </table>

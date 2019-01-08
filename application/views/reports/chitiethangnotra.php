@@ -14,7 +14,9 @@
                 </thead>
                 <tbody>
                 <?php
+                    $toncuoiky = 0;
                     foreach($datas as $data){
+                        $toncuoiky = $toncuoiky + $data['ton_cuoi_ky'];
                         ?>
                          <tr>
                          <td><?php echo $data['ma_hang_hoa']; ?></td>
@@ -28,6 +30,11 @@
                  <?php       
                     }
                 ?>
+                <tr>
+                    <td colspan="5" style="font-weight: bold">Tổng tồn cuối kỳ</td>
+                    <td style="font-weight: bold"><?php echo $toncuoiky; ?></td>
+                    <td></td>
+                </tr>
                 </tbody>
             </table>
     </div>
