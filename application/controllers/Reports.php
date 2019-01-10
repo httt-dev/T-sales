@@ -908,14 +908,13 @@ class Reports extends Secure_Controller
 		foreach ($arrItems as $arrItem) {
 			// hang hoa ton kho trong ky
 			$arrDauky = $this->Giftcard->BC11_hanghoanotra('kytruoc',$arrItem['id'], $start_date,$end_date);
-			//print_r($arrDauky); die;
 			$arrTrongky = $this->Giftcard->BC11_hanghoanotra('trongky',$arrItem['id'], $start_date,$end_date);
 			$name = $arrItem['name'];
 			$id = $arrItem['id'];
 			if($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'] !== 0){
 				$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
 				$result[$i]['ten_hang_hoa'] = $name;
-				$result[$i]['no_dau_ky'] = $arrDauky['sono'];
+				$result[$i]['no_dau_ky'] = -($arrDauky['sono']);
 				$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
 				$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
 				$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']);
@@ -955,7 +954,7 @@ class Reports extends Secure_Controller
 					if($arrDauky['sono'] !=0 || $arrTrongky['quantity_loan_return'] !=0 || $arrTrongky['quantity_loan'] !=0){
 						$result[$i]['ma_hang_hoa'] = $customer->code;
 						$result[$i]['ten_hang_hoa'] = $arrDauky['name'];
-						$result[$i]['no_dau_ky'] = $arrDauky['sono'];
+						$result[$i]['no_dau_ky'] = -($arrDauky['sono']);
 						$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
 						$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
 						$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']);

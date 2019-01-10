@@ -1267,7 +1267,7 @@ class Giftcard extends CI_Model
 		$return['quantity_loan_return'] = 0;
 		$return['quantity_loan'] = 0;
 		// tong gia tri xuat kho
-		$this->db->select('SUM((quantity_loan_return - quantity_loan)) as sono, quantity_loan, quantity_loan_return ');
+		$this->db->select('SUM((quantity_loan_return - quantity_loan)) as sono, SUM(quantity_loan) as quantity_loan, SUM(quantity_loan_return) as quantity_loan_return ');
 		$this->db->from('t_sales_items');
 		$this->db->join('t_sales', 't_sales.sale_id = t_sales_items.sale_id');
 		$this->db->join('t_items', 't_items.id = t_sales_items.item_id');
@@ -1296,7 +1296,7 @@ class Giftcard extends CI_Model
 		$return['quantity_loan'] = 0;
 		$return['name'] = '';
 		// tong gia tri xuat kho
-		$this->db->select('SUM((quantity_loan_return - quantity_loan)) as sono, quantity_loan, quantity_loan_return, t_people.full_name as name ');
+		$this->db->select('SUM((quantity_loan_return - quantity_loan)) as sono, SUM(quantity_loan) as quantity_loan, SUM(quantity_loan_return) as quantity_loan_return, t_people.full_name as name ');
 		$this->db->from('t_sales_items');
 		$this->db->join('t_sales', 't_sales.sale_id = t_sales_items.sale_id');
 		$this->db->join('t_items', 't_items.id = t_sales_items.item_id');
