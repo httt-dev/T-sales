@@ -314,6 +314,7 @@ function hanghoanotra_table_headers()
 		//array('so_chi_kytruoc' => "Số tiền chi kỳ trước"),
 		array('tra_trong_ky' => "Trả trong kỳ"),
 		array('no_trong_ky' => "Nợ trong kỳ"),
+		array('dieu_chinh' => "SL điều chỉnh"),
 		array('ton_cuoi_ky' => "Tồn cuối kỳ")
 	);
 	

@@ -912,12 +912,15 @@ class Reports extends Secure_Controller
 			$name = $arrItem['name'];
 			$id = $arrItem['id'];
 			if($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'] !== 0){
+				// Lay dieu chinh so luong
+				$slDieuchinhs = $this->Giftcard->BC11_dieuchinhsoluong($id);
 				$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
 				$result[$i]['ten_hang_hoa'] = $name;
 				$result[$i]['no_dau_ky'] = -($arrDauky['sono']);
 				$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
 				$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
-				$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']);
+				$result[$i]['dieu_chinh'] = $slDieuchinhs;
+				$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']) + $slDieuchinhs;
 				$result[$i]['edit'] = anchor(
 					$controller_name . "/BC11_chitiethanghoanotra/$id/$start_date/$end_date",
 					'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
@@ -952,13 +955,22 @@ class Reports extends Secure_Controller
 				$arrTrongky = $this->Giftcard->BC11_hanghoanotrakhachhang("trongky",$customer->person_id, $item_id, $start_date, $end_date);
 				if(is_numeric($arrDauky['sono']) || is_numeric($arrTrongky['quantity_loan_return']) || is_numeric($arrTrongky['quantity_loan'])){
 					if($arrDauky['sono'] !=0 || $arrTrongky['quantity_loan_return'] !=0 || $arrTrongky['quantity_loan'] !=0){
-						$result[$i]['ma_hang_hoa'] = $customer->code;
-						$result[$i]['ten_hang_hoa'] = $arrDauky['name'];
+						// Tinh dieu chinh so luong
+						$slDieuchinhs = $this->Giftcard->BC11_dieuchinhsoluongTheoKh($item_id,$customer->person_id);
+						$result[$i]['code'] = $customer->code;
+						$result[$i]['person_id'] = $customer->person_id;
+						$result[$i]['name'] = $arrDauky['name'];
 						$result[$i]['no_dau_ky'] = -($arrDauky['sono']);
+						$result[$i]['sl_dieu_chinh'] = $slDieuchinhs;
 						$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
 						$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
-						$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']);
+						$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']) +$slDieuchinhs;
 						$result[$i]['edit'] = anchor(
+							"reports/chitietnotrakhachhang/$customer->person_id/$item_id/$start_date/$end_date",
+							'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
+							array('target' => '_blank')
+						);
+						$result[$i]['modify'] = anchor(
 							"reports/chitietnotrakhachhang/$customer->person_id/$item_id/$start_date/$end_date",
 							'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
 							array('target' => '_blank')
@@ -969,8 +981,15 @@ class Reports extends Secure_Controller
 			}
 		}
 		//echo "<pre>";print_r($result); die;
-		
 		$data['datas'] = $result;
+		$data['item_id'] = $item_id;
+		$data['role'] = false;
+		// Kiem tra xem co phai la nguoi quan tri hay khong
+		$person_id = $this->session->userdata('person_id');
+		if($person_id == 1)
+		{
+			$data['role'] = true;	
+		}
 		$this->load->view("reports/chitiethangnotra", $data);
 	}
 
@@ -979,6 +998,31 @@ class Reports extends Secure_Controller
 		$datas = $this->Giftcard->BC11_chitietnotrakhachhang($customer_id,$item_id, $start_date, $end_date);
 		$data['datas'] = $datas;
 		$this->load->view("reports/chitietnotrakhachhang", $data);
+	}
+
+	public function dieuchinhhangnotra(){
+		$person_id = $this->input->get('person_id');
+		$value = $this->input->get('value');
+		$item_id = $this->input->get('item_id');
+		// Kiem tra xem co ton tai chua, chua thi them moi, co thi cap nhat
+		$this->db->from('regulations_items');
+		$this->db->where('item_id', $item_id);
+		$this->db->where('person_id', $person_id);
+		$count = $this->db->count_all_results();
+		$data = array(
+			'item_id' => $item_id,
+			'person_id'	 => $person_id,
+			'value'	 => $value
+		);
+		if($count > 0){
+			$this->db->where('item_id', $item_id);
+			$this->db->where('person_id', $person_id);
+			$this->db->update('regulations_items', $data);
+		}else{
+			
+			$this->db->insert('regulations_items', $data);
+		}
+		echo json_encode(array('success' => 1, 'message' => "Cập nhật thành công"));
 	}
 
 	

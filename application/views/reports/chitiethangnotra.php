@@ -8,6 +8,7 @@
                         <th>Nợ đầu kỳ</th>
                         <th>Trả trong kỳ</th>
                         <th>Nợ trong kỳ</th>
+                        <th>SL Điều chỉnh</th> 
                         <th>Tồn cuối kỳ</th>
                         <th>Xem chi tiết</th>
                     </tr>
@@ -19,19 +20,24 @@
                         $toncuoiky = $toncuoiky + $data['ton_cuoi_ky'];
                         ?>
                          <tr>
-                         <td><?php echo $data['ma_hang_hoa']; ?></td>
-                         <td><?php echo $data['ten_hang_hoa']; ?></td>
-                         <td><?php echo $data['no_dau_ky']; ?></td>
-                         <td><?php echo $data['tra_trong_ky']; ?></td>
-                         <td><?php echo $data['no_trong_ky']; ?></td>
-                         <td><?php echo $data['ton_cuoi_ky']; ?></td>
-                         <td><?php echo $data['edit']; ?></td>
+                            <td><?php echo $data['code']; ?></td>
+                            <td><?php echo $data['name']; ?></td>
+                            <td><?php echo $data['no_dau_ky']; ?></td>
+                            <td><?php echo $data['tra_trong_ky']; ?></td>
+                            <td><?php echo $data['no_trong_ky']; ?></td>
+                            <?php if(!$role){ ?>
+                                <td><?php echo $data['sl_dieu_chinh']; ?></td> 
+                            <?php }else{ ?>
+                                <td><input value="<?php echo $data['sl_dieu_chinh']; ?>" onchange="change_value(this,'<?php echo $data['person_id']; ?>','<?php echo $item_id; ?>','<?php echo $data['ton_cuoi_ky']; ?>')" type="text" name="hanggui" class="form-control input-sm"></td>
+                            <?php } ?>
+                            <td id="ton-cuoi-ky-<?php echo $data['person_id']; ?>"><?php echo $data['ton_cuoi_ky']; ?></td>
+                            <td><?php echo $data['edit']; ?></td>
                          </tr>
                  <?php       
                     }
                 ?>
                 <tr>
-                    <td colspan="5" style="font-weight: bold">Tổng tồn cuối kỳ</td>
+                    <td colspan="6" style="font-weight: bold">Tổng tồn cuối kỳ</td>
                     <td style="font-weight: bold"><?php echo $toncuoiky; ?></td>
                     <td></td>
                 </tr>
@@ -40,3 +46,23 @@
     </div>
 
 </div>
+
+<script>
+function change_value(sel,person_id,item_id,toncuoiky){
+    $.ajax({
+        url : '<?php echo site_url('reports/dieuchinhhangnotra');?>',
+        type : "get",
+        dataType:"json",
+        data : {
+            value: sel.value,
+            person_id: person_id,
+            item_id: item_id
+        },
+        success : function (arrResult){
+            var toncuoiky_new = +toncuoiky + +sel.value;
+            $("#ton-cuoi-ky-"+person_id).html(toncuoiky_new);
+
+        }
+    });
+}
+</script>

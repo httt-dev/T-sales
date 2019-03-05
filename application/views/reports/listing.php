@@ -77,7 +77,6 @@ if(isset($error))
 		<div class="loader"></div>
 		<span>Hệ thống đang backup và gửi Email...</span>
 	</div>
-	
 </div>
 <style>
 .loader {

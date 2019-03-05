@@ -33,9 +33,9 @@ $(document).ready(function()
 </script>
 
 <div id="title_bar" class="btn-toolbar">
-	<a style="color:white" href="<?php echo site_url('employees/logs');?>"><button class='btn btn-warning btn-sm pull-right'>
+	<a style="color:white" href="<?php echo site_url('messages/closedata');?>"><button class='btn btn-danger btn-sm pull-right'>
 		<span class="glyphicon glyphicon-eye-open">&nbsp</span>
-		Xem lịch sử Log
+		Chốt số liệu theo năm
 	</button></a>
 	<span class="pull-right"> &#160;&#160;</span>
 	<button class='btn btn-success btn-sm pull-right modal-dlg' data-btn-submit='<?php echo $this->lang->line('common_submit') ?>' data-href='<?php echo site_url($controller_name."/config"); ?>'
@@ -46,6 +46,10 @@ $(document).ready(function()
 			title='<?php echo $this->lang->line($controller_name. '_new'); ?>'>
 		<span class="glyphicon glyphicon-user">&nbsp</span><?php echo $this->lang->line($controller_name. '_new'); ?>
 	</button>
+	<a style="color:white" href="<?php echo site_url('employees/logs');?>"><button class='btn btn-warning btn-sm pull-right'>
+		<span class="glyphicon glyphicon-eye-open">&nbsp</span>
+		Xem lịch sử Log
+	</button></a>
 </div>
 
 <div id="toolbar">

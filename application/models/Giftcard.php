@@ -1343,6 +1343,31 @@ class Giftcard extends CI_Model
 		return $arrReturn;
 	}
 
+	public function BC11_dieuchinhsoluong($item_id){
+		$value = 0;
+		$this->db->select('SUM(value) as value');
+		$this->db->from('regulations_items');
+		$this->db->where('item_id', $item_id);
+		$arrReturn = $this->db->get()->result_array();
+		if($arrReturn[0]['value']){
+			$value = $arrReturn[0]['value'];
+		}
+		return $value;
+	}
+
+	public function BC11_dieuchinhsoluongTheoKh($item_id,$person_id){
+		$value = 0;
+		$this->db->select('SUM(value) as value');
+		$this->db->from('regulations_items');
+		$this->db->where('item_id', $item_id);
+		$this->db->where('person_id', $person_id);
+		$arrReturn = $this->db->get()->result_array();
+		if($arrReturn[0]['value']){
+			$value = $arrReturn[0]['value'];
+		}
+		return $value;
+	}
+
 
 	
 
