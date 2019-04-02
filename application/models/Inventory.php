@@ -169,7 +169,7 @@ class Inventory extends CI_Model
 		$success = $this->db->insert('logs', $save_data);
 	}
 
-	public function loginLog($action,$type){
+	public function loginLog($action='',$type=''){
 		$save_data = array(
 			'user_id' => $this->session->userdata('person_id'),
 			'action' => 'login',

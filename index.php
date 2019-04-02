@@ -1,4 +1,5 @@
 <?php
+session_start();
 set_time_limit(0);
 ini_set('memory_limit', '200000000000M');
 /**
@@ -56,7 +57,7 @@ ini_set('memory_limit', '200000000000M');
  * NOTE: If you change these, also change the error_reporting() code below
  */
 //	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
 
 /*
  *---------------------------------------------------------------
