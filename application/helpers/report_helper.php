@@ -321,6 +321,24 @@ function hanghoanotra_table_headers()
 	return transform_headers(array_merge($headers));
 }
 
+function hanghoanotrakhachang_table_headers()
+{
+	$CI =& get_instance();
+
+	$headers = array(
+		array('code' => "Mã khách hàng"),
+		array('name' => "Tên khách hàng"),
+		array('no_dau_ky' => "Nợ đầu kỳ"),
+		//array('so_chi_kytruoc' => "Số tiền chi kỳ trước"),
+		array('tra_trong_ky' => "Trả trong kỳ"),
+		array('no_trong_ky' => "Nợ trong kỳ"),
+		array('dieu_chinh' => "SL điều chỉnh"),
+		array('ton_cuoi_ky' => "Tồn cuối kỳ")
+	);
+	
+	return transform_headers(array_merge($headers));
+}
+
 
 	
 ?>

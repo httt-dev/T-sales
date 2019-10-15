@@ -1304,7 +1304,9 @@ class Giftcard extends CI_Model
 		$this->db->join('t_customers', 't_customers.person_id = t_sales.customer_id');
 		$this->db->where('t_people.person_id', $customer_id);
 		$this->db->where('t_sales.type', 1);
-		$this->db->where('t_sales_items.item_id', $item_id);
+		if($item_id !== ''){
+			$this->db->where('t_sales_items.item_id', $item_id);
+		}
 		$this->db->group_start();
 		$this->db->where('t_sales_items.quantity_loan <>', 0);
 		$this->db->or_where('t_sales_items.quantity_loan_return <>', 0);
@@ -1332,7 +1334,9 @@ class Giftcard extends CI_Model
 		$this->db->join('t_customers', 't_customers.person_id = t_sales.customer_id');
 		$this->db->where('t_people.person_id', $customer_id);
 		$this->db->where('t_sales.type', 1);
-		$this->db->where('t_sales_items.item_id', $item_id);
+		if($item_id !== -1){
+			$this->db->where('t_sales_items.item_id', $item_id);
+		}
 		$this->db->group_start();
 		$this->db->where('t_sales_items.quantity_loan <>', 0);
 		$this->db->or_where('t_sales_items.quantity_loan_return <>', 0);
@@ -1360,6 +1364,18 @@ class Giftcard extends CI_Model
 		$this->db->select('SUM(value) as value');
 		$this->db->from('regulations_items');
 		$this->db->where('item_id', $item_id);
+		$this->db->where('person_id', $person_id);
+		$arrReturn = $this->db->get()->result_array();
+		if($arrReturn[0]['value']){
+			$value = $arrReturn[0]['value'];
+		}
+		return $value;
+	}
+
+	public function BC12_dieuchinhsoluongkh($person_id){
+		$value = 0;
+		$this->db->select('SUM(value) as value');
+		$this->db->from('regulations_items');
 		$this->db->where('person_id', $person_id);
 		$arrReturn = $this->db->get()->result_array();
 		if($arrReturn[0]['value']){

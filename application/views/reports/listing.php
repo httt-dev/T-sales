@@ -62,7 +62,8 @@ if(isset($error))
 				<a class="list-group-item" href="<?php echo site_url('reports/detailed_sales/hanghoatonkho');?>">09 - Hàng hóa tồn kho</a>
 				<a class="list-group-item" href="<?php echo site_url('reports/detailed_sales/hoanghoaxuatkhobaobi');?>">10 - Hàng hóa xuất kho bao bì</a>
 				<!--<a class="list-group-item" href="<?php echo site_url('reports/detailed_sales/hoanghoatonkhobaobi');?>">11 - Hàng hóa tồn kho bao bì</a>-->
-				<a class="list-group-item" href="<?php echo site_url('reports/detailed_sales/hanghoanotra');?>">11 - Báo cáo hàng hóa nợ trả</a>
+				<a class="list-group-item" href="<?php echo site_url('reports/detailed_sales/hanghoanotra');?>">11 - Báo cáo hàng hóa nợ trả theo sản phẩm</a>
+				<a class="list-group-item" href="<?php echo site_url('reports/detailed_sales/hanghoanotrakhachhang');?>">12 - Báo cáo hàng hóa nợ trả theo khách hàng</a>
 			 </div>
 		</div>
 	</div>

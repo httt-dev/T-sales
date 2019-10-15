@@ -162,7 +162,11 @@ class Reports extends Secure_Controller
 		}elseif($type == 'hanghoanotra'){
 			$data['table_headers'] = hanghoanotra_table_headers();
 			$this->load->view('reports/hanghoanotra', $data);
+		}elseif($type == 'hanghoanotrakhachhang'){
+			$data['table_headers'] = hanghoanotrakhachang_table_headers();
+			$this->load->view('reports/hanghoanotrakhachhang.php', $data);
 		}
+		
 	}
 
 	public function search()
@@ -237,6 +241,9 @@ class Reports extends Secure_Controller
 		}elseif ($type == 'hangnotra') {
 			$customer_id = $this->input->get('customer_id');
 			$this->BC11_hanghoanotra($customer_id, $search, $start_date,$end_date);
+		}elseif ($type == 'hangnotrakhachhang') {
+			$customer_id = $this->input->get('customer_id');
+			$this->BC12_hanghoanotrakhachhang($customer_id, $search, $start_date,$end_date);
 		}elseif($type == 'hanghoaxuatkhobaobi'){
 			$this->BC10_hanghoaxuatkhobaobi($search, $start_date, $end_date);
 		}
@@ -1023,6 +1030,107 @@ class Reports extends Secure_Controller
 			$this->db->insert('regulations_items', $data);
 		}
 		echo json_encode(array('success' => 1, 'message' => "Cập nhật thành công"));
+	}
+
+	/** ----------------------------------------------------------------
+	 * ------------------ BC 12: HANG HOA NO TRA THEO KHACH HANG ----------------------------------
+	 * ----------------------------------------------------------------
+	 **/
+
+	private function BC12_hanghoanotrakhachhang($item_id, $search, $start_date,$end_date)
+	{
+		$CI =& get_instance();
+		$controller_name = $CI->uri->segment(1);
+		$result = array();
+		$i = 0;
+		// lay tat ca cac khach hang
+		$customers = $this->Customer->get_all_customer(-1);
+		foreach ($customers as $person)
+		{
+			if($person){
+				$arrDauky = $this->Giftcard->BC11_hanghoanotrakhachhang("kytruoc",$person->person_id,'', $start_date, $end_date);
+				$arrTrongky = $this->Giftcard->BC11_hanghoanotrakhachhang("trongky",$person->person_id, '', $start_date, $end_date);
+				if(is_numeric($arrDauky['sono']) || is_numeric($arrTrongky['quantity_loan_return']) || is_numeric($arrTrongky['quantity_loan'])){
+					if($arrDauky['sono'] !=0 || $arrTrongky['quantity_loan_return'] !=0 || $arrTrongky['quantity_loan'] !=0){
+						$slDieuchinhs = $this->Giftcard->BC12_dieuchinhsoluongkh($person->person_id);
+						// Tinh dieu chinh so luong
+						$result[$i]['code'] = $person->code;
+						$result[$i]['person_id'] = $person->person_id;
+						$result[$i]['name'] = $arrDauky['name'];
+						$result[$i]['no_dau_ky'] = -($arrDauky['sono']);
+						$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
+						$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
+						$result[$i]['dieu_chinh'] = $slDieuchinhs;
+						$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']) +$slDieuchinhs;
+						$result[$i]['edit'] = anchor(
+							$controller_name . "/BC12_chitiethanghoanotrakhachhang/$person->person_id/$start_date/$end_date",
+							'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
+							array('class' => 'modal-dlg', 'title' => "Xem chi tiết")
+						);
+						$i++;
+					}
+				}
+			}
+		}
+		echo json_encode(array('total' => $total_rows, 'rows' => $result));
+	}
+
+	public function BC12_chitiethanghoanotrakhachhang($person_id = -1, $start_date, $end_date)
+	{
+		// lay tat cac san pham
+		$arrItems = $this->Giftcard->BC11_search_tonkho('')->result_array();
+		$start_date = str_replace('/', '-', $start_date);
+		$start_date = date("Y-m-d", strtotime($start_date));
+		$end_date = str_replace('/', '-', $end_date);
+		$end_date = date("Y-m-d", strtotime($end_date));
+		$result = array();
+		$i = 0;
+		$CI = &get_instance();
+		$controller_name = $CI->uri->segment(1);
+		foreach ($arrItems as $arrItem) {
+			$name = $arrItem['name'];
+			$id = $arrItem['id'];
+			// hang hoa ton kho trong ky
+			$arrDauky = $this->Giftcard->BC11_hanghoanotrakhachhang("kytruoc",$person_id,$id, $start_date, $end_date);
+			$arrTrongky = $this->Giftcard->BC11_hanghoanotrakhachhang("trongky",$person_id,$id, $start_date, $end_date);
+			if($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan'] !== 0){
+				// Lay dieu chinh so luong
+				$slDieuchinhs = $this->Giftcard->BC11_dieuchinhsoluongTheoKh($id,$person_id);
+				$result[$i]['id_item'] = $id;
+				$result[$i]['ma_hang_hoa'] = $arrItem['item_number'];
+				$result[$i]['ten_hang_hoa'] = $name;
+				$result[$i]['no_dau_ky'] = -($arrDauky['sono']);
+				$result[$i]['tra_trong_ky'] = $arrTrongky['quantity_loan_return'];
+				$result[$i]['no_trong_ky'] = $arrTrongky['quantity_loan'];
+				$result[$i]['sl_dieu_chinh'] = $slDieuchinhs;
+				$result[$i]['ton_cuoi_ky'] = -($arrDauky['sono'] + $arrTrongky['quantity_loan_return'] - $arrTrongky['quantity_loan']) + $slDieuchinhs;
+				$result[$i]['edit'] = anchor(
+					$controller_name . "/chitietnotrakhachhang/$person_id/$id/$start_date/$end_date",
+					'<span class="glyphicon glyphicon-info-sign icon-th"></span>',
+					array('class' => 'modal-dlg', 'title' => "Xem chi tiết")
+				);
+				$i++;
+			}
+		}	
+		$data['datas'] = $result;
+		$data['person_id'] = $person_id;
+		$data['role'] = false;
+		// Kiem tra xem co phai la nguoi quan tri hay khong
+		$person_id = $this->session->userdata('person_id');
+		if($person_id == 1)
+		{
+			$data['role'] = true;	
+		}
+		//echo "<pre>"; print_r( $data); die;
+		$this->load->view("reports/chitiethangnotratheokhachhang", $data);
+	}
+
+
+	public function chitietnotrahanghoa($customer_id, $start_date, $end_date)
+	{
+		$datas = $this->Giftcard->BC11_chitietnotrakhachhang($customer_id,-1, $start_date, $end_date);
+		$data['datas'] = $datas;
+		$this->load->view("reports/chitietnotrakhachhang", $data);
 	}
 
 	
